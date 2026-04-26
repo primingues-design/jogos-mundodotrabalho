@@ -1,0 +1,2009 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🌱 Aprender é Crescer — EJA</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800;900&family=Baloo+2:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ══════════════════════════════════════════
+   VARIÁVEIS E RESET
+══════════════════════════════════════════ */
+:root {
+  --cor1: #2ECC71; --cor1d: #27AE60;
+  --cor2: #3498DB; --cor2d: #2980B9;
+  --cor3: #E67E22; --cor3d: #D35400;
+  --cor4: #9B59B6; --cor4d: #8E44AD;
+  --cor5: #E74C3C; --cor5d: #C0392B;
+  --amarelo: #F1C40F; --amarelod: #F39C12;
+  --escuro: #1A2B3C; --texto: #2C3E50;
+  --cinza: #ECF0F1; --branco: #FFFFFF;
+  --sombra: 0 6px 24px rgba(0,0,0,0.12);
+  --sombra2: 0 12px 40px rgba(0,0,0,0.18);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Nunito', sans-serif; background: #f0f4f8; color: var(--texto); overflow-x: hidden; }
+
+/* ══════════════════════════════════════════
+   TELAS (SPA)
+══════════════════════════════════════════ */
+.tela { display: none; min-height: 100vh; }
+.tela.ativa { display: block; animation: entrar 0.4s ease; }
+@keyframes entrar { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:none; } }
+
+/* ══════════════════════════════════════════
+   TELA INICIAL
+══════════════════════════════════════════ */
+#tela-inicio {
+  background: linear-gradient(135deg, #1A2B3C 0%, #2C3E50 50%, #1a3a2a 100%);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  min-height: 100vh; padding: 30px 20px;
+  position: relative; overflow: hidden;
+}
+#tela-inicio::before {
+  content:''; position:absolute; inset:0;
+  background: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Ccircle cx='40' cy='40' r='20'/%3E%3C/g%3E%3C/svg%3E");
+}
+.logo-inicio { position:relative; text-align:center; margin-bottom:10px; }
+.logo-emoji { font-size: clamp(3rem,8vw,5rem); display:block; margin-bottom:8px; filter: drop-shadow(0 4px 12px rgba(0,0,0,0.4)); }
+.logo-titulo { font-family:'Fredoka One',cursive; font-size:clamp(2rem,6vw,3.5rem); color:#fff; letter-spacing:1px; text-shadow: 0 4px 16px rgba(0,0,0,0.4); }
+.logo-sub { font-size:clamp(0.9rem,2.5vw,1.1rem); color:rgba(255,255,255,0.75); margin-top:6px; font-weight:600; }
+
+.separador { width:80px; height:4px; background:linear-gradient(90deg,var(--cor1),var(--cor2)); border-radius:4px; margin:20px auto; }
+
+.escolha-titulo { color:#fff; font-size:clamp(1rem,3vw,1.3rem); font-weight:800; text-align:center; margin-bottom:24px; opacity:0.9; }
+
+.niveis-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 16px; max-width: 780px; width: 100%;
+  position: relative;
+}
+.nivel-btn {
+  background: rgba(255,255,255,0.1);
+  border: 2px solid rgba(255,255,255,0.2);
+  border-radius: 20px; padding: 20px 14px;
+  color: #fff; cursor: pointer;
+  transition: all 0.25s; backdrop-filter: blur(8px);
+  font-family: 'Nunito', sans-serif;
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+}
+.nivel-btn:hover { transform: translateY(-6px); background: rgba(255,255,255,0.18); border-color: rgba(255,255,255,0.5); box-shadow: var(--sombra2); }
+.nivel-emoji { font-size: 2.2rem; }
+.nivel-ano { font-family:'Fredoka One',cursive; font-size:1.3rem; }
+.nivel-desc { font-size:0.78rem; opacity:0.8; font-weight:600; text-align:center; line-height:1.3; }
+.nivel-badge { font-size:0.65rem; background:rgba(255,255,255,0.2); padding:3px 8px; border-radius:20px; font-weight:700; }
+
+.nivel-btn[data-nivel="1"] { border-color: #2ECC71; }
+.nivel-btn[data-nivel="1"]:hover { background: rgba(46,204,113,0.2); }
+.nivel-btn[data-nivel="2"] { border-color: #3498DB; }
+.nivel-btn[data-nivel="2"]:hover { background: rgba(52,152,219,0.2); }
+.nivel-btn[data-nivel="3"] { border-color: #E67E22; }
+.nivel-btn[data-nivel="3"]:hover { background: rgba(230,126,34,0.2); }
+.nivel-btn[data-nivel="4"] { border-color: #9B59B6; }
+.nivel-btn[data-nivel="4"]:hover { background: rgba(155,89,182,0.2); }
+.nivel-btn[data-nivel="5"] { border-color: #E74C3C; }
+.nivel-btn[data-nivel="5"]:hover { background: rgba(231,76,60,0.2); }
+
+.rodape-inicio { margin-top:30px; color:rgba(255,255,255,0.4); font-size:0.8rem; text-align:center; position:relative; }
+
+/* ══════════════════════════════════════════
+   CABEÇALHO DE NÍVEL
+══════════════════════════════════════════ */
+.nivel-header {
+  padding: 20px 20px 0;
+  max-width: 960px; margin: 0 auto;
+  display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+}
+.btn-voltar {
+  background: white; border: 2px solid #ddd; border-radius: 50px;
+  padding: 8px 18px; font-family:'Nunito',sans-serif; font-size:0.9rem;
+  font-weight:800; cursor:pointer; transition:all 0.2s;
+  display:flex; align-items:center; gap:6px;
+}
+.btn-voltar:hover { border-color:var(--cor2); color:var(--cor2); transform:translateX(-2px); }
+.nivel-titulo-header { font-family:'Fredoka One',cursive; font-size:1.5rem; }
+
+.estrelas-container { margin-left:auto; display:flex; gap:4px; }
+.estrela { font-size:1.4rem; filter:grayscale(1); transition:all 0.3s; }
+.estrela.acesa { filter:none; transform:scale(1.2); }
+
+/* ══════════════════════════════════════════
+   MENU DE JOGOS POR NÍVEL
+══════════════════════════════════════════ */
+.jogos-menu {
+  max-width: 960px; margin: 16px auto 0;
+  padding: 0 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 14px;
+}
+.jogo-card {
+  background: white; border-radius: 18px; padding: 20px 16px;
+  box-shadow: var(--sombra); cursor: pointer;
+  transition: all 0.25s; border: 3px solid transparent;
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  text-align: center; position: relative; overflow: hidden;
+}
+.jogo-card::before { content:''; position:absolute; top:0;left:0;right:0;height:4px; }
+.jogo-card.verde::before { background:var(--cor1); }
+.jogo-card.azul::before { background:var(--cor2); }
+.jogo-card.laranja::before { background:var(--cor3); }
+.jogo-card.roxo::before { background:var(--cor4); }
+.jogo-card.vermelho::before { background:var(--cor5); }
+.jogo-card.amarelo::before { background:var(--amarelo); }
+.jogo-card:hover { transform:translateY(-5px); box-shadow:var(--sombra2); }
+.jogo-card.verde:hover { border-color:var(--cor1); }
+.jogo-card.azul:hover { border-color:var(--cor2); }
+.jogo-card.laranja:hover { border-color:var(--cor3); }
+.jogo-card.roxo:hover { border-color:var(--cor4); }
+.jogo-card.vermelho:hover { border-color:var(--cor5); }
+.jogo-card.amarelo:hover { border-color:var(--amarelo); }
+.jogo-icone { font-size:2.4rem; }
+.jogo-nome { font-family:'Fredoka One',cursive; font-size:1.05rem; color:var(--texto); }
+.jogo-desc { font-size:0.78rem; color:#888; font-weight:600; line-height:1.3; }
+.jogo-dificuldade { font-size:0.65rem; padding:3px 10px; border-radius:20px; font-weight:800; }
+.dif-facil { background:#d4edda; color:#155724; }
+.dif-medio { background:#fff3cd; color:#856404; }
+.dif-dificil { background:#f8d7da; color:#721c24; }
+.jogo-novo { position:absolute; top:8px;right:8px; background:var(--cor5); color:white; font-size:0.55rem; padding:2px 6px; border-radius:10px; font-weight:900; }
+
+/* ══════════════════════════════════════════
+   ÁREA DO JOGO
+══════════════════════════════════════════ */
+.jogo-area {
+  max-width: 900px; margin: 20px auto 60px;
+  padding: 0 16px;
+}
+.jogo-box {
+  background: white; border-radius: 20px;
+  padding: 28px; box-shadow: var(--sombra);
+}
+.jogo-header-titulo {
+  font-family:'Fredoka One',cursive; font-size:1.6rem;
+  margin-bottom:6px; display:flex; align-items:center; gap:10px;
+}
+.jogo-instrucao { font-size:0.95rem; color:#666; font-weight:600; margin-bottom:20px; }
+.placar-jogo {
+  background:linear-gradient(90deg,var(--amarelo),var(--cor3));
+  border-radius:12px; padding:8px 18px; display:inline-flex;
+  align-items:center; gap:8px; font-weight:900; font-size:1rem;
+  color:#5a2d00; margin-bottom:18px;
+}
+.feedback {
+  padding:12px 18px; border-radius:12px; margin-top:14px;
+  font-size:1rem; font-weight:700; display:none;
+}
+.feedback.certo { background:#d4edda; color:#155724; display:block; }
+.feedback.errado { background:#f8d7da; color:#721c24; display:block; }
+.feedback.info { background:#d1ecf1; color:#0c5460; display:block; }
+.btn { display:inline-block; padding:11px 24px; border-radius:50px; font-family:'Nunito',sans-serif; font-size:0.95rem; font-weight:800; cursor:pointer; border:none; transition:all 0.2s; box-shadow:0 4px 10px rgba(0,0,0,0.12); }
+.btn:hover { transform:translateY(-2px); box-shadow:0 6px 16px rgba(0,0,0,0.18); }
+.btn-verde { background:var(--cor1); color:white; }
+.btn-azul { background:var(--cor2); color:white; }
+.btn-laranja { background:var(--cor3); color:white; }
+.btn-roxo { background:var(--cor4); color:white; }
+.btn-amarelo { background:var(--amarelo); color:#5a2d00; }
+.btn-cinza { background:#bbb; color:white; }
+
+/* ══════════════════════════════════════════
+   JOGO: SÍLABAS / LETRAS (N1)
+══════════════════════════════════════════ */
+.sil-container { margin-bottom:18px; }
+.sil-dica { background:var(--amarelo); padding:8px 16px; border-radius:8px; font-weight:700; font-size:0.95rem; display:inline-block; margin-bottom:12px; color:#5a2d00; }
+.sil-montada { background:var(--cinza); border:3px dashed var(--cor2); border-radius:12px; padding:14px; min-height:56px; font-size:1.4rem; font-weight:800; text-align:center; letter-spacing:3px; color:var(--cor2); margin-bottom:12px; }
+.sil-grid { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:14px; }
+.sil-btn { background:var(--cor2); color:white; border:none; border-radius:10px; padding:10px 16px; font-size:1.1rem; font-weight:800; cursor:pointer; transition:all 0.2s; font-family:'Nunito',sans-serif; }
+.sil-btn:hover { background:var(--cor2d); transform:scale(1.08); }
+.sil-btn.sel { background:var(--cor1); transform:scale(1.08); }
+.sil-btn.err { background:var(--cor5); }
+
+/* ══════════════════════════════════════════
+   JOGO: IMAGEM-PALAVRA (N1/N2)
+══════════════════════════════════════════ */
+.imgpal-emoji { font-size:5rem; text-align:center; margin-bottom:12px; display:block; }
+.opcoes-grid { display:flex; flex-wrap:wrap; gap:10px; margin-bottom:14px; }
+.opcao-btn { background:white; border:3px solid var(--cor2); border-radius:12px; padding:11px 20px; font-size:1rem; font-weight:800; cursor:pointer; font-family:'Nunito',sans-serif; transition:all 0.2s; }
+.opcao-btn:hover { background:var(--cor2); color:white; }
+.opcao-btn.certa { background:var(--cor1); color:white; border-color:var(--cor1d); }
+.opcao-btn.errada { background:var(--cor5); color:white; border-color:var(--cor5d); }
+
+/* ══════════════════════════════════════════
+   JOGO: CAÇA-PALAVRAS
+══════════════════════════════════════════ */
+.caca-wrapper { overflow-x:auto; }
+.caca-grade { display:inline-grid; gap:3px; }
+.caca-cel { width:34px; height:34px; background:var(--cinza); border:2px solid #ddd; border-radius:6px; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:0.85rem; cursor:pointer; transition:all 0.15s; flex-shrink:0; user-select:none; }
+.caca-cel:hover { background:rgba(52,152,219,0.2); }
+.caca-cel.sel { background:var(--amarelo); border-color:var(--amarelod); }
+.caca-cel.found { background:var(--cor1); color:white; border-color:var(--cor1d); }
+.palavras-lista { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:14px; }
+.pw-tag { background:var(--cinza); border:2px solid #ddd; border-radius:8px; padding:5px 12px; font-weight:700; font-size:0.88rem; transition:all 0.2s; }
+.pw-tag.found { background:var(--cor1); color:white; border-color:var(--cor1d); text-decoration:line-through; }
+
+/* ══════════════════════════════════════════
+   JOGO: QUIZ
+══════════════════════════════════════════ */
+.quiz-pergunta { background:linear-gradient(135deg,#e8f5fe,#f0e8fe); border-radius:14px; padding:18px; font-size:1.1rem; font-weight:700; margin-bottom:16px; border-left:5px solid var(--cor2); line-height:1.5; }
+.quiz-ops { display:flex; flex-direction:column; gap:10px; margin-bottom:14px; }
+.quiz-op { background:white; border:3px solid #ddd; border-radius:12px; padding:12px 16px; font-size:0.95rem; font-weight:700; cursor:pointer; text-align:left; font-family:'Nunito',sans-serif; transition:all 0.2s; }
+.quiz-op:hover { border-color:var(--cor2); background:#e8f0fe; }
+.quiz-op.certa { background:#d4edda; border-color:var(--cor1); color:#155724; }
+.quiz-op.errada { background:#f8d7da; border-color:var(--cor5); color:#721c24; }
+.quiz-op:disabled { cursor:default; }
+.quiz-nav { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-top:14px; }
+.quiz-prog { font-weight:700; color:#888; font-size:0.9rem; }
+.barra-prog { background:#eee; border-radius:50px; height:10px; overflow:hidden; margin-bottom:16px; }
+.barra-fill { height:100%; background:linear-gradient(90deg,var(--cor1),var(--cor2)); border-radius:50px; transition:width 0.6s ease; }
+
+/* ══════════════════════════════════════════
+   JOGO: VERDADEIRO OU FALSO
+══════════════════════════════════════════ */
+.vof-item { background:var(--cinza); border-radius:12px; padding:16px; margin-bottom:14px; border-left:4px solid #ddd; }
+.vof-item.certa { border-left-color:var(--cor1); background:#d4edda; }
+.vof-item.errada { border-left-color:var(--cor5); background:#f8d7da; }
+.vof-frase { font-size:0.98rem; font-weight:700; margin-bottom:12px; line-height:1.5; }
+.vof-btns { display:flex; gap:10px; }
+.vof-v { background:var(--cor1); color:white; border:none; border-radius:50px; padding:9px 22px; font-size:0.95rem; font-weight:800; cursor:pointer; font-family:'Nunito',sans-serif; transition:all 0.2s; }
+.vof-f { background:var(--cor5); color:white; border:none; border-radius:50px; padding:9px 22px; font-size:0.95rem; font-weight:800; cursor:pointer; font-family:'Nunito',sans-serif; transition:all 0.2s; }
+.vof-v:hover,.vof-f:hover { transform:scale(1.06); }
+.vof-v:disabled,.vof-f:disabled { opacity:0.6; cursor:default; transform:none; }
+.vof-resultado { margin-top:9px; font-weight:800; font-size:0.9rem; display:none; }
+
+/* ══════════════════════════════════════════
+   JOGO: COMPLETAR FRASE
+══════════════════════════════════════════ */
+.completar-frase { font-size:1.1rem; font-weight:700; line-height:2; margin-bottom:16px; background:var(--cinza); padding:16px; border-radius:12px; }
+.completar-input { border:3px solid var(--cor2); border-radius:8px; padding:6px 12px; font-size:1rem; font-weight:800; font-family:'Nunito',sans-serif; outline:none; min-width:120px; max-width:200px; text-align:center; color:var(--cor2d); }
+.completar-input:focus { border-color:var(--cor4); }
+.completar-input.certa { border-color:var(--cor1); background:#d4edda; color:var(--cor1d); }
+.completar-input.errada { border-color:var(--cor5); background:#f8d7da; color:var(--cor5d); }
+
+/* ══════════════════════════════════════════
+   JOGO: MONTAR FRASE (PALAVRAS EMBARALHADAS)
+══════════════════════════════════════════ */
+.frase-montada { background:var(--cinza); border:3px dashed var(--cor1); border-radius:12px; padding:14px; min-height:52px; display:flex; flex-wrap:wrap; gap:6px; align-items:center; margin-bottom:12px; font-weight:700; color:var(--cor1d); }
+.pw-frase { background:var(--cor2); color:white; border:none; border-radius:8px; padding:7px 14px; font-size:0.95rem; font-weight:800; cursor:pointer; font-family:'Nunito',sans-serif; transition:all 0.2s; }
+.pw-frase:hover { background:var(--cor2d); transform:translateY(-2px); }
+.pw-frase.usada { background:#bbb; cursor:default; transform:none; }
+.pw-na-frase { background:var(--cor1); color:white; border-radius:6px; padding:5px 12px; cursor:pointer; font-weight:800; font-size:0.95rem; transition:all 0.15s; }
+.pw-na-frase:hover { background:var(--cor5); }
+
+/* ══════════════════════════════════════════
+   JOGO: ASSOCIAÇÃO / LIGAR
+══════════════════════════════════════════ */
+.ligar-container { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:16px; }
+.ligar-col { display:flex; flex-direction:column; gap:8px; }
+.ligar-item { background:var(--cinza); border:3px solid #ddd; border-radius:12px; padding:12px 14px; font-weight:700; font-size:0.9rem; cursor:pointer; transition:all 0.2s; text-align:center; }
+.ligar-item:hover { border-color:var(--cor2); background:#e8f0fe; }
+.ligar-item.sel { border-color:var(--cor4); background:#f3e8fe; color:var(--cor4d); }
+.ligar-item.certa { border-color:var(--cor1); background:#d4edda; }
+.ligar-item.errada { border-color:var(--cor5); background:#f8d7da; }
+
+/* ══════════════════════════════════════════
+   JOGO: DUOLINGO-STYLE (ESCUTA/TRADUZA)
+══════════════════════════════════════════ */
+.duo-card { background:linear-gradient(135deg,#e8f5fe,#e8fef0); border-radius:20px; padding:24px; text-align:center; border:3px solid #c8e6f5; margin-bottom:18px; }
+.duo-emoji { font-size:4rem; margin-bottom:10px; display:block; }
+.duo-frase { font-size:1.2rem; font-weight:800; color:var(--texto); margin-bottom:6px; }
+.duo-sub { font-size:0.85rem; color:#888; font-weight:600; }
+.duo-ops { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:14px; }
+.duo-op { background:white; border:3px solid #ddd; border-radius:14px; padding:14px 10px; font-size:0.95rem; font-weight:800; cursor:pointer; font-family:'Nunito',sans-serif; transition:all 0.2s; display:flex; align-items:center; gap:8px; }
+.duo-op:hover { border-color:var(--cor2); background:#e8f0fe; transform:scale(1.02); }
+.duo-op.certa { background:#d4edda; border-color:var(--cor1); }
+.duo-op.errada { background:#f8d7da; border-color:var(--cor5); }
+.duo-vidas { display:flex; gap:4px; margin-bottom:12px; justify-content:center; }
+.vida { font-size:1.3rem; transition:all 0.3s; }
+.vida.perdida { opacity:0.2; filter:grayscale(1); transform:scale(0.8); }
+.duo-streak { background:linear-gradient(90deg,var(--cor3),var(--amarelo)); color:white; padding:6px 16px; border-radius:50px; font-weight:900; font-size:0.85rem; display:inline-block; margin-bottom:12px; }
+
+/* ══════════════════════════════════════════
+   JOGO: BANCO IMOBILIÁRIO (N5)
+══════════════════════════════════════════ */
+.banco-board { display:grid; grid-template-columns:repeat(5,1fr); gap:6px; margin-bottom:18px; max-width:500px; }
+.banco-casa { background:white; border:2px solid #ddd; border-radius:10px; padding:8px 6px; text-align:center; font-size:0.75rem; font-weight:700; min-height:70px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; cursor:pointer; transition:all 0.2s; position:relative; }
+.banco-casa:hover { border-color:var(--cor3); transform:scale(1.05); }
+.banco-casa.comprada { background:var(--cor3); color:white; border-color:var(--cor3d); }
+.banco-casa.comprada-outro { background:var(--cor5); color:white; border-color:var(--cor5d); }
+.banco-casa.minha { background:var(--cor1); color:white; border-color:var(--cor1d); }
+.banco-jogador { position:absolute; top:3px; right:3px; font-size:0.9rem; }
+.banco-info { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:14px; }
+.banco-stat { background:var(--cinza); border-radius:10px; padding:12px; text-align:center; }
+.banco-stat-val { font-family:'Fredoka One',cursive; font-size:1.5rem; color:var(--cor3); }
+.banco-stat-label { font-size:0.78rem; color:#888; font-weight:700; }
+.banco-pergunta { background:linear-gradient(135deg,#fff3cd,#fef9e7); border:3px solid var(--amarelo); border-radius:14px; padding:16px; margin-bottom:14px; font-weight:700; font-size:0.95rem; }
+.banco-dice { font-size:3rem; cursor:pointer; transition:all 0.3s; display:inline-block; }
+.banco-dice:hover { transform:rotate(20deg) scale(1.2); }
+.banco-dice.rolando { animation:rolar 0.5s ease; }
+@keyframes rolar { 0%{transform:rotate(0)} 25%{transform:rotate(90deg) scale(1.2)} 50%{transform:rotate(180deg)} 75%{transform:rotate(270deg) scale(1.2)} 100%{transform:rotate(360deg)} }
+
+/* ══════════════════════════════════════════
+   RESULTADO FINAL
+══════════════════════════════════════════ */
+.resultado-box { text-align:center; padding:30px 20px; }
+.result-emoji { font-size:4rem; margin-bottom:12px; }
+.result-titulo { font-family:'Fredoka One',cursive; font-size:2rem; color:var(--cor2); margin-bottom:8px; }
+.result-pontos { font-size:1.2rem; font-weight:700; margin-bottom:16px; }
+.confetes { position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:999; }
+
+/* ══════════════════════════════════════════
+   RESPONSIVO
+══════════════════════════════════════════ */
+@media(max-width:600px) {
+  .niveis-grid { grid-template-columns:repeat(2,1fr); }
+  .jogos-menu { grid-template-columns:repeat(2,1fr); }
+  .ligar-container { grid-template-columns:1fr; }
+  .duo-ops { grid-template-columns:1fr; }
+  .banco-board { grid-template-columns:repeat(4,1fr); }
+  .banco-info { grid-template-columns:1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════
+     TELA INICIAL
+══════════════════════════════════════ -->
+<div id="tela-inicio" class="tela ativa">
+  <div class="logo-inicio">
+    <span class="logo-emoji">🌱</span>
+    <div class="logo-titulo">Aprender é Crescer</div>
+    <div class="logo-sub">EJA · Mundo do Trabalho · Educação Financeira</div>
+  </div>
+  <div class="separador"></div>
+  <div class="escolha-titulo">✨ Escolha seu nível de aprendizado:</div>
+  <div class="niveis-grid">
+    <div class="nivel-btn" data-nivel="1" onclick="entrarNivel(1)">
+      <span class="nivel-emoji">🌸</span>
+      <span class="nivel-ano">1º Ano</span>
+      <span class="nivel-desc">Letras, sílabas e primeiras palavras</span>
+      <span class="nivel-badge">🟢 Iniciante</span>
+    </div>
+    <div class="nivel-btn" data-nivel="2" onclick="entrarNivel(2)">
+      <span class="nivel-emoji">🌻</span>
+      <span class="nivel-ano">2º Ano</span>
+      <span class="nivel-desc">Palavras, imagens e frases curtas</span>
+      <span class="nivel-badge">🔵 Básico</span>
+    </div>
+    <div class="nivel-btn" data-nivel="3" onclick="entrarNivel(3)">
+      <span class="nivel-emoji">🌳</span>
+      <span class="nivel-ano">3º Ano</span>
+      <span class="nivel-desc">Leitura, escrita e interpretação</span>
+      <span class="nivel-badge">🟠 Intermediário</span>
+    </div>
+    <div class="nivel-btn" data-nivel="4" onclick="entrarNivel(4)">
+      <span class="nivel-emoji">🦋</span>
+      <span class="nivel-ano">4º Ano</span>
+      <span class="nivel-desc">Textos, raciocínio e finanças</span>
+      <span class="nivel-badge">🟣 Avançado</span>
+    </div>
+    <div class="nivel-btn" data-nivel="5" onclick="entrarNivel(5)">
+      <span class="nivel-emoji">🚀</span>
+      <span class="nivel-ano">5º Ano</span>
+      <span class="nivel-desc">Projetos, debate e banco imobiliário</span>
+      <span class="nivel-badge">🔴 Especialista</span>
+    </div>
+  </div>
+  <div class="rodape-inicio">📚 Conteúdo baseado nas apostilas oficiais · Letramento Digital EJA</div>
+</div>
+
+<!-- ══════════════════════════════════════
+     TELA DE NÍVEL (MENU DOS JOGOS)
+══════════════════════════════════════ -->
+<div id="tela-nivel" class="tela">
+  <div class="nivel-header">
+    <button class="btn-voltar" onclick="voltarInicio()">← Início</button>
+    <div class="nivel-titulo-header" id="nivel-titulo-header"></div>
+    <div class="estrelas-container" id="estrelas-container"></div>
+  </div>
+  <div class="jogos-menu" id="jogos-menu"></div>
+</div>
+
+<!-- ══════════════════════════════════════
+     TELA DO JOGO
+══════════════════════════════════════ -->
+<div id="tela-jogo" class="tela">
+  <div class="nivel-header">
+    <button class="btn-voltar" onclick="voltarMenuNivel()">← Jogos</button>
+    <div class="nivel-titulo-header" id="jogo-nivel-header"></div>
+  </div>
+  <div class="jogo-area">
+    <div class="jogo-box" id="jogo-conteudo"></div>
+  </div>
+</div>
+
+<script>
+/* ══════════════════════════════════════════
+   ESTADO GLOBAL
+══════════════════════════════════════════ */
+let nivelAtual = 1;
+let jogoAtual = '';
+let pontosGlobais = { 1:0, 2:0, 3:0, 4:0, 5:0 };
+
+/* ══════════════════════════════════════════
+   NAVEGAÇÃO
+══════════════════════════════════════════ */
+function mostrarTela(id) {
+  document.querySelectorAll('.tela').forEach(t => t.classList.remove('ativa'));
+  document.getElementById(id).classList.add('ativa');
+  window.scrollTo(0,0);
+}
+
+function voltarInicio() { mostrarTela('tela-inicio'); }
+function voltarMenuNivel() { mostrarTela('tela-nivel'); renderMenuNivel(nivelAtual); }
+
+function entrarNivel(n) {
+  nivelAtual = n;
+  mostrarTela('tela-nivel');
+  renderMenuNivel(n);
+}
+
+/* ══════════════════════════════════════════
+   DADOS DOS NÍVEIS
+══════════════════════════════════════════ */
+const NIVEIS_INFO = {
+  1: { nome:'1º Ano — Iniciante 🌸', cor:'verde', emoji:'🌸' },
+  2: { nome:'2º Ano — Básico 🌻', cor:'azul', emoji:'🌻' },
+  3: { nome:'3º Ano — Intermediário 🌳', cor:'laranja', emoji:'🌳' },
+  4: { nome:'4º Ano — Avançado 🦋', cor:'roxo', emoji:'🦋' },
+  5: { nome:'5º Ano — Especialista 🚀', cor:'vermelho', emoji:'🚀' },
+};
+
+const JOGOS_POR_NIVEL = {
+  1: [
+    { id:'silabas1', nome:'Jogo das Sílabas', icone:'🔤', desc:'Monte palavras com sílabas', cor:'verde', dif:'facil' },
+    { id:'imgpal1', nome:'Imagem e Palavra', icone:'🖼️', desc:'Relacione imagem à palavra', cor:'azul', dif:'facil' },
+    { id:'letras1', nome:'Complete a Letra', icone:'✍️', desc:'Escreva a letra que falta', cor:'laranja', dif:'facil' },
+    { id:'duo1', nome:'Duolingo do Trabalho', icone:'🦜', desc:'Aprenda palavras do tema', cor:'verde', dif:'facil', novo:true },
+    { id:'vof1', nome:'Verdadeiro ou Falso', icone:'✅', desc:'Frases simples do tema', cor:'roxo', dif:'facil' },
+  ],
+  2: [
+    { id:'silabas2', nome:'Sílabas Avançadas', icone:'🔤', desc:'Palavras mais longas', cor:'azul', dif:'facil' },
+    { id:'imgpal2', nome:'Escolha Certa', icone:'🎯', desc:'Associe profissão à descrição', cor:'verde', dif:'facil' },
+    { id:'frase2', nome:'Monte a Frase', icone:'💬', desc:'Ordene as palavras', cor:'laranja', dif:'medio' },
+    { id:'caca2', nome:'Caça-Palavras', icone:'🔍', desc:'Encontre 8 palavras', cor:'roxo', dif:'medio' },
+    { id:'duo2', nome:'Duolingo Financeiro', icone:'🦜', desc:'Palavras de finanças', cor:'azul', dif:'medio', novo:true },
+    { id:'vof2', nome:'Verdadeiro ou Falso', icone:'✅', desc:'Direitos do trabalhador', cor:'verde', dif:'medio' },
+  ],
+  3: [
+    { id:'completar3', nome:'Complete a Frase', icone:'✍️', desc:'Preencha os espaços', cor:'laranja', dif:'medio' },
+    { id:'ligar3', nome:'Ligue as Colunas', icone:'🔗', desc:'Profissão x descrição', cor:'verde', dif:'medio' },
+    { id:'quiz3', nome:'Quiz do Trabalho', icone:'❓', desc:'12 perguntas sobre o tema', cor:'azul', dif:'medio' },
+    { id:'caca3', nome:'Caça-Palavras Plus', icone:'🔍', desc:'Palavras de finanças', cor:'roxo', dif:'medio' },
+    { id:'duo3', nome:'Duolingo dos Direitos', icone:'🦜', desc:'Direitos e deveres', cor:'laranja', dif:'medio', novo:true },
+    { id:'frase3', nome:'Monte Textos', icone:'📝', desc:'Forme frases completas', cor:'verde', dif:'dificil' },
+  ],
+  4: [
+    { id:'quiz4', nome:'Quiz Financeiro', icone:'💰', desc:'Educação financeira', cor:'roxo', dif:'dificil' },
+    { id:'calcular4', nome:'Calcule seu Salário', icone:'🧮', desc:'Simule gastos reais', cor:'amarelo', dif:'dificil' },
+    { id:'duo4', nome:'Duolingo Avançado', icone:'🦜', desc:'IA e futuro do trabalho', cor:'roxo', dif:'dificil', novo:true },
+    { id:'ligar4', nome:'Ativos x Passivos', icone:'📊', desc:'Classifique os itens', cor:'laranja', dif:'dificil' },
+    { id:'vof4', nome:'V ou F — IA', icone:'🤖', desc:'Inteligência Artificial', cor:'verde', dif:'dificil' },
+    { id:'frase4', nome:'Argumente!', icone:'🗣️', desc:'Complete argumentos', cor:'azul', dif:'dificil' },
+  ],
+  5: [
+    { id:'banco5', nome:'Banco Imobiliário', icone:'🏦', desc:'Aprenda finanças jogando!', cor:'amarelo', dif:'dificil', novo:true },
+    { id:'quiz5', nome:'Quiz Final', icone:'🏆', desc:'Todas as apostilas', cor:'vermelho', dif:'dificil' },
+    { id:'duo5', nome:'Duolingo Expert', icone:'🦜', desc:'Desafio final do tema', cor:'verde', dif:'dificil', novo:true },
+    { id:'debate5', nome:'Debate de Ideias', icone:'💡', desc:'Complete reflexões críticas', cor:'roxo', dif:'dificil' },
+    { id:'plano5', nome:'Meu Plano Financeiro', icone:'📋', desc:'Monte seu orçamento', cor:'laranja', dif:'dificil', novo:true },
+  ],
+};
+
+function renderMenuNivel(n) {
+  const info = NIVEIS_INFO[n];
+  document.getElementById('nivel-titulo-header').textContent = info.nome;
+  
+  const pts = pontosGlobais[n];
+  const estrelas = pts >= 200 ? 3 : pts >= 100 ? 2 : pts >= 30 ? 1 : 0;
+  const sc = document.getElementById('estrelas-container');
+  sc.innerHTML = [1,2,3].map(i=>`<span class="estrela ${i<=estrelas?'acesa':''}">⭐</span>`).join('');
+
+  const menu = document.getElementById('jogos-menu');
+  menu.innerHTML = JOGOS_POR_NIVEL[n].map(j => `
+    <div class="jogo-card ${j.cor}" onclick="abrirJogo('${j.id}')">
+      ${j.novo ? '<span class="jogo-novo">NOVO</span>' : ''}
+      <span class="jogo-icone">${j.icone}</span>
+      <span class="jogo-nome">${j.nome}</span>
+      <span class="jogo-desc">${j.desc}</span>
+      <span class="jogo-dificuldade dif-${j.dif}">${j.dif==='facil'?'⭐ Fácil':j.dif==='medio'?'⭐⭐ Médio':'⭐⭐⭐ Difícil'}</span>
+    </div>
+  `).join('');
+}
+
+/* ══════════════════════════════════════════
+   ABRIR JOGO
+══════════════════════════════════════════ */
+function abrirJogo(id) {
+  jogoAtual = id;
+  mostrarTela('tela-jogo');
+  document.getElementById('jogo-nivel-header').textContent = NIVEIS_INFO[nivelAtual].nome;
+  const c = document.getElementById('jogo-conteudo');
+  c.innerHTML = '';
+  if (JOGOS[id]) JOGOS[id](c);
+  else c.innerHTML = '<p style="color:#888;padding:20px;">🚧 Em construção...</p>';
+}
+
+function addPontos(n) {
+  pontosGlobais[nivelAtual] = (pontosGlobais[nivelAtual]||0) + n;
+}
+
+function embaralhar(arr) {
+  const a=[...arr];
+  for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
+  return a;
+}
+
+function resultadoFinal(pontos, total, container) {
+  const pct = Math.round(pontos/total*100);
+  container.innerHTML = `
+    <div class="resultado-box">
+      <div class="result-emoji">${pct>=80?'🏆':pct>=60?'🌟':pct>=40?'👍':'📚'}</div>
+      <div class="result-titulo">${pct>=80?'Excelente!':pct>=60?'Muito bem!':pct>=40?'Bom trabalho!':'Continue estudando!'}</div>
+      <div class="result-pontos">Você acertou <strong>${pontos} de ${total}</strong> (${pct}%)</div>
+      <div class="barra-prog"><div class="barra-fill" style="width:${pct}%"></div></div>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:16px;">
+        <button class="btn btn-verde" onclick="abrirJogo('${jogoAtual}')">🔄 Jogar novamente</button>
+        <button class="btn btn-azul" onclick="voltarMenuNivel()">← Outros jogos</button>
+      </div>
+    </div>`;
+}
+
+/* ══════════════════════════════════════════
+   BANCO DE DADOS DOS JOGOS
+══════════════════════════════════════════ */
+const JOGOS = {};
+
+/* ─────────────────────────────────────────
+   NÍVEL 1 — SÍLABAS
+───────────────────────────────────────── */
+JOGOS.silabas1 = function(c) {
+  const palavras = [
+    { palavra:'TRABALHO', silabas:['TRA','BA','LHO'], dica:'💼 O que fazemos para ganhar dinheiro' },
+    { palavra:'SALARIO', silabas:['SA','LA','RI','O'], dica:'💰 O dinheiro que recebemos pelo trabalho' },
+    { palavra:'EMPREGO', silabas:['EM','PRE','GO'], dica:'🏢 O trabalho com carteira assinada' },
+    { palavra:'DINHEIRO', silabas:['DI','NHEI','RO'], dica:'💵 Usamos para comprar coisas' },
+    { palavra:'PROFISSAO', silabas:['PRO','FIS','SÃO'], dica:'👩‍⚕️ Trabalho que aprendemos a fazer' },
+    { palavra:'COMPUTADOR', silabas:['COM','PU','TA','DOR'], dica:'💻 Máquina de trabalho digital' },
+  ];
+  let idx=0, sels=[], pontos=0;
+  const dados = palavras;
+
+  function render() {
+    if(idx>=dados.length){ resultadoFinal(pontos,dados.length*10,c); return; }
+    const p=dados[idx]; sels=[];
+    const emb=embaralhar(p.silabas.map((s,i)=>({s,i})));
+    c.innerHTML = `
+      <div class="jogo-header-titulo">🔤 Jogo das Sílabas</div>
+      <p class="jogo-instrucao">Clique nas sílabas NA ORDEM CERTA para formar a palavra!</p>
+      <div class="placar-jogo">⭐ Pontos: <span id="sp">${pontos}</span></div>
+      <div class="sil-container">
+        <span class="sil-dica">💡 ${p.dica}</span>
+        <div class="sil-montada" id="montada">Clique nas sílabas...</div>
+        <div class="sil-grid" id="sgrid">
+          ${emb.map((o,i)=>`<button class="sil-btn" id="sb${i}" onclick="silClick(${i},${o.i},'${o.s}')">${o.s}</button>`).join('')}
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:8px;">
+          <button class="btn btn-laranja" onclick="silLimpar()">🔄 Apagar</button>
+          <button class="btn btn-verde" onclick="silVerificar()">✅ Verificar</button>
+        </div>
+        <div class="feedback" id="sfb"></div>
+        <p style="margin-top:10px;font-size:0.85rem;color:#888;">Palavra ${idx+1} de ${dados.length}</p>
+      </div>`;
+    window._silP=p;
+  }
+
+  window.silClick=function(btnIdx,ordemOrig,texto){
+    const btn=document.getElementById('sb'+btnIdx);
+    if(btn.classList.contains('sel')||btn.classList.contains('err'))return;
+    sels.push({btnIdx,ordemOrig,texto});
+    btn.classList.add('sel');
+    document.getElementById('montada').textContent=sels.map(s=>s.texto).join('-');
+  };
+  window.silLimpar=function(){
+    sels=[];
+    document.querySelectorAll('.sil-btn').forEach(b=>b.classList.remove('sel','err'));
+    document.getElementById('montada').textContent='Clique nas sílabas...';
+    const fb=document.getElementById('sfb'); fb.className='feedback'; fb.textContent='';
+  };
+  window.silVerificar=function(){
+    const p=window._silP;
+    const fb=document.getElementById('sfb');
+    if(sels.length!==p.silabas.length){fb.className='feedback info';fb.textContent='⚠️ Selecione todas as sílabas!';return;}
+    const ok=sels.map(s=>s.ordemOrig).join(',')===[...Array(p.silabas.length).keys()].join(',');
+    if(ok){fb.className='feedback certo';fb.textContent='🎉 Correto! '+p.palavra;pontos+=10;document.getElementById('sp').textContent=pontos;addPontos(10);setTimeout(()=>{idx++;render();},1200);}
+    else{fb.className='feedback errado';fb.textContent='❌ Ordem incorreta! Tente: '+p.silabas.join(' - ');sels.forEach(s=>document.getElementById('sb'+s.btnIdx).classList.add('err'));}
+  };
+  render();
+};
+
+/* ─────────────────────────────────────────
+   NÍVEL 1 — IMAGEM E PALAVRA
+───────────────────────────────────────── */
+JOGOS.imgpal1 = function(c) {
+  const itens = [
+    {emoji:'💼',correto:'TRABALHO',ops:['TRABALHO','ESCOLA','PASSEIO','FESTA']},
+    {emoji:'💰',correto:'DINHEIRO',ops:['PRESENTE','DINHEIRO','ROUPA','LIVRO']},
+    {emoji:'🏥',correto:'HOSPITAL',ops:['ESCOLA','MERCADO','HOSPITAL','BANCO']},
+    {emoji:'📱',correto:'CELULAR',ops:['CELULAR','LIVRO','CANETA','RELÓGIO']},
+    {emoji:'🚗',correto:'CARRO',ops:['ÔNIBUS','TREM','CARRO','AVIÃO']},
+    {emoji:'🤖',correto:'ROBÔ',ops:['BONECA','ROBÔ','CARRO','AVIÃO']},
+    {emoji:'💻',correto:'COMPUTADOR',ops:['TELEVISÃO','COMPUTADOR','GELADEIRA','RÁDIO']},
+    {emoji:'📚',correto:'LIVRO',ops:['LIVRO','CADERNO','LÁPIS','BORRACHA']},
+  ];
+  let idx=0,pontos=0,resp=false;
+
+  function render(){
+    if(idx>=itens.length){resultadoFinal(pontos,itens.length*10,c);return;}
+    const it=itens[idx]; resp=false;
+    const ops=embaralhar(it.ops);
+    c.innerHTML=`
+      <div class="jogo-header-titulo">🖼️ Imagem e Palavra</div>
+      <p class="jogo-instrucao">Veja a imagem e escolha a palavra certa!</p>
+      <div class="placar-jogo">⭐ Pontos: <span id="pp">${pontos}</span></div>
+      <span class="imgpal-emoji">${it.emoji}</span>
+      <p style="text-align:center;font-weight:700;color:#666;margin-bottom:14px;">O que você vê na imagem?</p>
+      <div class="opcoes-grid">
+        ${ops.map(o=>`<button class="opcao-btn" onclick="imgpalResp(this,'${o}','${it.correto}')">${o}</button>`).join('')}
+      </div>
+      <div class="feedback" id="ipfb"></div>
+      <button class="btn btn-azul" style="margin-top:12px;" onclick="imgpalProx()">➡️ Próxima</button>
+      <p style="margin-top:10px;font-size:0.85rem;color:#888;">Imagem ${idx+1} de ${itens.length}</p>`;
+  }
+
+  window.imgpalResp=function(btn,escolha,correto){
+    if(resp)return; resp=true;
+    document.querySelectorAll('.opcao-btn').forEach(b=>b.disabled=true);
+    const fb=document.getElementById('ipfb');
+    if(escolha===correto){btn.classList.add('certa');fb.className='feedback certo';fb.textContent='🎉 Correto! É '+correto;pontos+=10;document.getElementById('pp').textContent=pontos;addPontos(10);}
+    else{btn.classList.add('errada');document.querySelectorAll('.opcao-btn').forEach(b=>{if(b.textContent===correto)b.classList.add('certa');});fb.className='feedback errado';fb.textContent='❌ A resposta certa é: '+correto;}
+  };
+  window.imgpalProx=function(){idx++;render();};
+  render();
+};
+
+/* ─────────────────────────────────────────
+   NÍVEL 1 — COMPLETAR LETRA
+───────────────────────────────────────── */
+JOGOS.letras1 = function(c) {
+  const itens = [
+    {frase:'T_ABALHO', resposta:'R', dica:'💼 Atividade para ganhar dinheiro: T_ABALHO'},
+    {frase:'SALAR_O', resposta:'I', dica:'💰 Pagamento mensal: SALAR_O'},
+    {frase:'EMPRE_O', resposta:'G', dica:'🏢 Trabalho formal: EMPRE_O'},
+    {frase:'DINHEI_O', resposta:'R', dica:'💵 Meio de troca: DINHEI_O'},
+    {frase:'PROFISS_O', resposta:'Ã', dica:'👩‍⚕️ Tipo de trabalho: PROFISS_O'},
+    {frase:'COMPUTE_OR', resposta:'AD', dica:'💻 Máquina de trabalho: COMPUTE_OR'},
+  ];
+  let idx=0,pontos=0;
+
+  function render(){
+    if(idx>=itens.length){resultadoFinal(pontos,itens.length*10,c);return;}
+    const it=itens[idx];
+    c.innerHTML=`
+      <div class="jogo-header-titulo">✍️ Complete a Letra</div>
+      <p class="jogo-instrucao">Digite a(s) letra(s) que estão faltando!</p>
+      <div class="placar-jogo">⭐ Pontos: <span id="lp">${pontos}</span></div>
+      <div style="text-align:center;margin-bottom:20px;">
+        <span style="background:var(--cinza);padding:16px 24px;border-radius:14px;font-size:2rem;font-weight:900;letter-spacing:4px;color:var(--cor2);">${it.frase}</span>
+      </div>
+      <p style="font-size:0.9rem;color:#888;font-weight:700;margin-bottom:12px;">💡 Dica: ${it.dica}</p>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
+        <label style="font-weight:700;">Sua resposta:</label>
+        <input id="letra-inp" class="completar-input" type="text" maxlength="3" placeholder="${it.resposta.length===1?'_':'__'}" autocomplete="off" style="width:80px;" oninput="this.value=this.value.toUpperCase()">
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <button class="btn btn-verde" onclick="letraVerif()">✅ Verificar</button>
+        <button class="btn btn-azul" onclick="letraProx()">➡️ Próxima</button>
+      </div>
+      <div class="feedback" id="lfb"></div>
+      <p style="margin-top:10px;font-size:0.85rem;color:#888;">Palavra ${idx+1} de ${itens.length}</p>`;
+    document.getElementById('letra-inp').focus();
+  }
+
+  window.letraVerif=function(){
+    const it=itens[idx];
+    const val=document.getElementById('letra-inp').value.trim().toUpperCase();
+    const fb=document.getElementById('lfb');
+    const inp=document.getElementById('letra-inp');
+    if(val===it.resposta.toUpperCase()){inp.classList.add('certa');fb.className='feedback certo';fb.textContent='🎉 Correto! A palavra é '+it.frase.replace('_',it.resposta);pontos+=10;document.getElementById('lp').textContent=pontos;addPontos(10);setTimeout(()=>{idx++;render();},1200);}
+    else{inp.classList.add('errada');fb.className='feedback errado';fb.textContent='❌ A letra correta é: '+it.resposta;}
+  };
+  window.letraProx=function(){idx++;render();};
+  render();
+};
+
+/* ─────────────────────────────────────────
+   NÍVEL 1 — DUO (DUOLINGO STYLE)
+───────────────────────────────────────── */
+JOGOS.duo1 = function(c) {
+  const rodadas = [
+    {emoji:'💼',pergunta:'O que é TRABALHO?',ops:[{t:'Atividade para ganhar dinheiro',ok:true},{t:'Um tipo de jogo',ok:false},{t:'Uma cor',ok:false},{t:'Um animal',ok:false}]},
+    {emoji:'💰',pergunta:'O que é SALÁRIO?',ops:[{t:'Dinheiro recebido pelo trabalho',ok:true},{t:'Um tipo de comida',ok:false},{t:'Um jogo de cartas',ok:false},{t:'Uma profissão',ok:false}]},
+    {emoji:'📝',pergunta:'O que é CARTEIRA ASSINADA?',ops:[{t:'Documento de trabalho formal',ok:true},{t:'Um tipo de cartão',ok:false},{t:'Uma bolsa',ok:false},{t:'Um aplicativo',ok:false}]},
+    {emoji:'🏢',pergunta:'O que é EMPREGO FORMAL?',ops:[{t:'Trabalho com direitos garantidos',ok:true},{t:'Trabalho sem pagamento',ok:false},{t:'Um tipo de casa',ok:false},{t:'Um jogo',ok:false}]},
+    {emoji:'🌟',pergunta:'O que é TRABALHO VOLUNTÁRIO?',ops:[{t:'Trabalho sem receber pagamento',ok:true},{t:'Trabalho muito bem pago',ok:false},{t:'Trabalho de computador',ok:false},{t:'Trabalho perigoso',ok:false}]},
+    {emoji:'🏠',pergunta:'O que é TRABALHO DOMÉSTICO?',ops:[{t:'Cozinhar, limpar, cuidar da casa',ok:true},{t:'Trabalho no hospital',ok:false},{t:'Trabalho na escola',ok:false},{t:'Trabalho no campo',ok:false}]},
+  ];
+  let idx=0,vidas=3,streak=0,pontos=0,resp=false;
+
+  function render(){
+    if(vidas<=0){c.innerHTML=`<div class="resultado-box"><div class="result-emoji">😢</div><div class="result-titulo">Sem vidas!</div><p class="result-pontos">Você fez ${pontos} pontos. Tente novamente!</p><button class="btn btn-verde" onclick="abrirJogo('duo1')">🔄 Recomeçar</button></div>`;return;}
+    if(idx>=rodadas.length){resultadoFinal(pontos,rodadas.length*10,c);return;}
+    const r=rodadas[idx]; resp=false;
+    const ops=embaralhar(r.ops);
+    c.innerHTML=`
+      <div class="jogo-header-titulo">🦜 Duolingo do Trabalho</div>
+      <div class="duo-vidas">${[1,2,3].map(i=>`<span class="vida ${i>vidas?'perdida':''}">❤️</span>`).join('')}</div>
+      <div class="duo-streak">🔥 Sequência: ${streak}</div>
+      <div class="placar-jogo">⭐ Pontos: ${pontos}</div>
+      <div class="duo-card">
+        <span class="duo-emoji">${r.emoji}</span>
+        <div class="duo-frase">${r.pergunta}</div>
+        <div class="duo-sub">Escolha a resposta correta:</div>
+      </div>
+      <div class="duo-ops">
+        ${ops.map((o,i)=>`<button class="duo-op" onclick="duoResp(this,${o.ok})">${['🅰️','🅱️','🅲️','🅳️'][i]} ${o.t}</button>`).join('')}
+      </div>
+      <div class="feedback" id="duofb"></div>
+      <p style="margin-top:10px;font-size:0.85rem;color:#888;">Pergunta ${idx+1} de ${rodadas.length}</p>`;
+  }
+
+  window.duoResp=function(btn,ok){
+    if(resp)return; resp=true;
+    document.querySelectorAll('.duo-op').forEach(b=>b.disabled=true);
+    const fb=document.getElementById('duofb');
+    if(ok){btn.classList.add('certa');streak++;pontos+=streak>3?15:10;addPontos(10);fb.className='feedback certo';fb.textContent='🎉 Correto! +'+( streak>3?15:10)+' pontos'+(streak>2?' (bônus sequência! 🔥)':'');setTimeout(()=>{idx++;render();},1400);}
+    else{btn.classList.add('errada');document.querySelectorAll('.duo-op').forEach(b=>{if(b.textContent.includes(r=> r.ok)&&b!==btn)b.classList.add('certa');});vidas--;streak=0;fb.className='feedback errado';fb.textContent='❌ Incorreto! -1 vida ❤️';setTimeout(()=>{idx++;render();},1600);}
+  };
+  render();
+};
+
+/* ─────────────────────────────────────────
+   NÍVEL 1 — VERDADEIRO OU FALSO
+───────────────────────────────────────── */
+JOGOS.vof1 = function(c) {
+  const itens = [
+    {frase:'O trabalho pode ser pago ou voluntário.',correto:'V',exp:'Verdadeiro! Existem trabalhos pagos e trabalhos voluntários (sem pagamento).'},
+    {frase:'O salário é o dinheiro que recebemos pelo trabalho.',correto:'V',exp:'Verdadeiro! Salário é o pagamento pelo trabalho realizado.'},
+    {frase:'Trabalho doméstico não é um trabalho de verdade.',correto:'F',exp:'Falso! Cozinhar, limpar e cuidar dos filhos é um trabalho real e muito importante.'},
+    {frase:'O pedreiro que constrói uma casa está trabalhando.',correto:'V',exp:'Verdadeiro! Construir é um tipo de trabalho.'},
+    {frase:'O trabalho não serve para nada na vida das pessoas.',correto:'F',exp:'Falso! O trabalho garante sustento, satisfação pessoal e convivência social.'},
+    {frase:'Uma professora que ensina crianças está trabalhando.',correto:'V',exp:'Verdadeiro! Ensinar é um trabalho formal muito importante.'},
+  ];
+  let acertos=0;
+  c.innerHTML=`
+    <div class="jogo-header-titulo">✅ Verdadeiro ou Falso</div>
+    <p class="jogo-instrucao">Leia cada frase e decida: é Verdadeiro (V) ou Falso (F)?</p>
+    <div class="placar-jogo">⭐ Acertos: <span id="vp">0</span> de ${itens.length}</div>
+    ${itens.map((it,i)=>`
+      <div class="vof-item" id="vi${i}">
+        <div class="vof-frase">📌 ${it.frase}</div>
+        <div class="vof-btns">
+          <button class="vof-v" id="vv${i}" onclick="vofResp(${i},'V')">✅ Verdadeiro</button>
+          <button class="vof-f" id="vf${i}" onclick="vofResp(${i},'F')">❌ Falso</button>
+        </div>
+        <div class="vof-resultado" id="vr${i}"></div>
+      </div>`).join('')}
+    <button class="btn btn-azul" style="margin-top:14px;" onclick="voltarMenuNivel()">← Voltar aos jogos</button>`;
+
+  window.vofResp=function(i,r){
+    const it=itens[i];
+    document.getElementById('vv'+i).disabled=true;
+    document.getElementById('vf'+i).disabled=true;
+    const res=document.getElementById('vr'+i);
+    const box=document.getElementById('vi'+i);
+    res.style.display='block';
+    if(r===it.correto){acertos++;box.classList.add('certa');res.style.color='var(--cor1d)';res.textContent='🎉 '+it.exp;document.getElementById('vp').textContent=acertos;addPontos(10);}
+    else{box.classList.add('errada');res.style.color='var(--cor5d)';res.textContent='❌ '+it.exp;}
+  };
+};
+
+/* ─────────────────────────────────────────
+   NÍVEL 2 — SÍLABAS AVANÇADAS
+───────────────────────────────────────── */
+JOGOS.silabas2 = function(c) {
+  const palavras = [
+    {palavra:'TECNOLOGIA', silabas:['TEC','NO','LO','GI','A'], dica:'📱 Conjunto de ferramentas da ciência'},
+    {palavra:'AUTOMACAO', silabas:['AU','TO','MA','ÇÃO'], dica:'🤖 Uso de máquinas para tarefas automáticas'},
+    {palavra:'PROGRAMADOR', silabas:['PRO','GRA','MA','DOR'], dica:'💻 Quem cria aplicativos e sites'},
+    {palavra:'TELEFONISTA', silabas:['TE','LE','FO','NIS','TA'], dica:'📞 Profissional que conectava chamadas'},
+    {palavra:'INTERNET', silabas:['IN','TER','NET'], dica:'🌐 Rede mundial de computadores'},
+    {palavra:'CARTEIRA', silabas:['CAR','TEI','RA'], dica:'📋 Documento do trabalho formal'},
+  ];
+  JOGOS.silabas1({ innerHTML:'' }); // reuse
+  let idx=0,sels=[],pontos=0;
+  const dados=palavras;
+
+  function render(){
+    if(idx>=dados.length){resultadoFinal(pontos,dados.length*10,c);return;}
+    const p=dados[idx]; sels=[];
+    const emb=embaralhar(p.silabas.map((s,i)=>({s,i})));
+    c.innerHTML=`
+      <div class="jogo-header-titulo">🔤 Sílabas Avançadas</div>
+      <p class="jogo-instrucao">Clique nas sílabas NA ORDEM CERTA!</p>
+      <div class="placar-jogo">⭐ Pontos: <span id="sp2">${pontos}</span></div>
+      <span class="sil-dica">💡 ${p.dica}</span>
+      <div class="sil-montada" id="m2">Clique nas sílabas...</div>
+      <div class="sil-grid">
+        ${emb.map((o,i)=>`<button class="sil-btn" id="s2${i}" onclick="s2Click(${i},${o.i},'${o.s}')">${o.s}</button>`).join('')}
+      </div>
+      <div style="display:flex;gap:10px;margin-top:8px;flex-wrap:wrap;">
+        <button class="btn btn-laranja" onclick="s2Limpar()">🔄 Apagar</button>
+        <button class="btn btn-verde" onclick="s2Verif()">✅ Verificar</button>
+      </div>
+      <div class="feedback" id="s2fb"></div>
+      <p style="margin-top:10px;font-size:0.85rem;color:#888;">Palavra ${idx+1} de ${dados.length}</p>`;
+    window._s2P=p;
+  }
+  window.s2Click=function(bi,oi,t){
+    const b=document.getElementById('s2'+bi);
+    if(b.classList.contains('sel')||b.classList.contains('err'))return;
+    sels.push({bi,oi,t}); b.classList.add('sel');
+    document.getElementById('m2').textContent=sels.map(s=>s.t).join('-');
+  };
+  window.s2Limpar=function(){sels=[];document.querySelectorAll('.sil-btn').forEach(b=>b.classList.remove('sel','err'));document.getElementById('m2').textContent='Clique nas sílabas...';const fb=document.getElementById('s2fb');fb.className='feedback';fb.textContent='';};
+  window.s2Verif=function(){
+    const p=window._s2P; const fb=document.getElementById('s2fb');
+    if(sels.length!==p.silabas.length){fb.className='feedback info';fb.textContent='⚠️ Selecione todas as sílabas!';return;}
+    const ok=sels.map(s=>s.oi).join(',')===[...Array(p.silabas.length).keys()].join(',');
+    if(ok){fb.className='feedback certo';fb.textContent='🎉 '+p.palavra+'! Perfeito!';pontos+=10;document.getElementById('sp2').textContent=pontos;addPontos(10);setTimeout(()=>{idx++;render();},1200);}
+    else{fb.className='feedback errado';fb.textContent='❌ Tente: '+p.silabas.join(' - ');sels.forEach(s=>document.getElementById('s2'+s.bi).classList.add('err'));}
+  };
+  render();
+};
+
+/* ─────────────────────────────────────────
+   NÍVEL 2 — ESCOLHA CERTA (imagem/profissão)
+───────────────────────────────────────── */
+JOGOS.imgpal2 = function(c) {
+  const itens = [
+    {emoji:'🔧',correto:'MECÂNICO',ops:['MECÂNICO','MÉDICO','PROFESSOR','COZINHEIRO'],desc:'Conserta carros e máquinas'},
+    {emoji:'👩‍⚕️',correto:'ENFERMEIRA',ops:['ENGENHEIRA','ENFERMEIRA','PROFESSORA','VENDEDORA'],desc:'Cuida de pacientes no hospital'},
+    {emoji:'📚',correto:'PROFESSOR',ops:['BOMBEIRO','PADEIRO','PROFESSOR','MOTORISTA'],desc:'Ensina em escolas'},
+    {emoji:'🚒',correto:'BOMBEIRO',ops:['BOMBEIRO','POLICIAL','MÉDICO','COZINHEIRO'],desc:'Combate incêndios e salva vidas'},
+    {emoji:'🍳',correto:'COZINHEIRO',ops:['MÚSICO','COZINHEIRO','PINTOR','DENTISTA'],desc:'Prepara alimentos'},
+    {emoji:'💻',correto:'PROGRAMADOR',ops:['PROGRAMADOR','JORNALISTA','DENTISTA','ARQUITETO'],desc:'Cria aplicativos e sites'},
+    {emoji:'🚗',correto:'MOTORISTA',ops:['MOTORISTA','BOMBEIRO','MÉDICO','PROFESSOR'],desc:'Dirige veículos para transporte'},
+  ];
+  let idx=0,pontos=0,resp=false;
+
+  function render(){
+    if(idx>=itens.length){resultadoFinal(pontos,itens.length*10,c);return;}
+    const it=itens[idx]; resp=false;
+    const ops=embaralhar(it.ops);
+    c.innerHTML=`
+      <div class="jogo-header-titulo">🎯 Escolha Certa</div>
+      <p class="jogo-instrucao">Veja a imagem e escolha a profissão correta!</p>
+      <div class="placar-jogo">⭐ Pontos: <span id="ep">${pontos}</span></div>
+      <span class="imgpal-emoji">${it.emoji}</span>
+      <p style="text-align:center;font-weight:700;background:var(--cinza);padding:10px;border-radius:10px;margin-bottom:14px;font-size:1rem;">"${it.desc}"</p>
+      <div class="opcoes-grid">
+        ${ops.map(o=>`<button class="opcao-btn" onclick="ecResp(this,'${o}','${it.correto}')">${o}</button>`).join('')}
+      </div>
+      <div class="feedback" id="ecfb"></div>
+      <button class="btn btn-azul" style="margin-top:12px;" onclick="ecProx()">➡️ Próxima</button>
+      <p style="margin-top:10px;font-size:0.85rem;color:#888;">Pergunta ${idx+1} de ${itens.length}</p>`;
+  }
+  window.ecResp=function(btn,e,c2){
+    if(resp)return;resp=true;
+    document.querySelectorAll('.opcao-btn').forEach(b=>b.disabled=true);
+    const fb=document.getElementById('ecfb');
+    if(e===c2){btn.classList.add('certa');fb.className='feedback certo';fb.textContent='🎉 Correto! É '+c2;pontos+=10;document.getElementById('ep').textContent=pontos;addPontos(10);}
+    else{btn.classList.add('errada');document.querySelectorAll('.opcao-btn').forEach(b=>{if(b.textContent===c2)b.classList.add('certa');});fb.className='feedback errado';fb.textContent='❌ A resposta correta é: '+c2;}
+  };
+  window.ecProx=function(){idx++;render();};
+  render();
+};
+
+/* ─────────────────────────────────────────
+   NÍVEL 2 — MONTE A FRASE
+───────────────────────────────────────── */
+JOGOS.frase2 = function(c) {
+  const frases = [
+    {palavras:['O','TRABALHO','GARANTE','O','SUSTENTO','DA','FAMÍLIA'],frase:'O TRABALHO GARANTE O SUSTENTO DA FAMÍLIA'},
+    {palavras:['O','SALÁRIO','É','O','PAGAMENTO','PELO','TRABALHO'],frase:'O SALÁRIO É O PAGAMENTO PELO TRABALHO'},
+    {palavras:['A','CARTEIRA','ASSINADA','GARANTE','DIREITOS'],frase:'A CARTEIRA ASSINADA GARANTE DIREITOS'},
+    {palavras:['O','COMPUTADOR','É','UMA','FERRAMENTA','DE','TRABALHO'],frase:'O COMPUTADOR É UMA FERRAMENTA DE TRABALHO'},
+    {palavras:['O','DINHEIRO','PAGA','AS','CONTAS','DA','FAMÍLIA'],frase:'O DINHEIRO PAGA AS CONTAS DA FAMÍLIA'},
+  ];
+  let idx=0,montada=[],pontos=0,resp=false;
+
+  function render(){
+    if(idx>=frases.length){resultadoFinal(pontos,frases.length*15,c);return;}
+    const fr=frases[idx]; montada=[]; resp=false;
+    const emb=embaralhar([...fr.palavras]);
+    c.innerHTML=`
+      <div class="jogo-header-titulo">💬 Monte a Frase</div>
+      <p class="jogo-instrucao">Clique nas palavras para montar a frase. Clique em uma palavra na frase para removê-la.</p>
+      <div class="placar-jogo">⭐ Pontos: <span id="fp2">${pontos}</span></div>
+      <div class="frase-montada" id="frm2"></div>
+      <p style="font-weight:700;margin-bottom:8px;color:#555;">Palavras disponíveis:</p>
+      <div class="sil-grid" id="fpg2">
+        ${emb.map((p,i)=>`<button class="pw-frase" id="fp2b${i}" onclick="fp2Add(${i},'${p}')">${p}</button>`).join('')}
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;">
+        <button class="btn btn-verde" onclick="fp2Verif()">✅ Verificar</button>
+        <button class="btn btn-laranja" onclick="fp2Clear()">🔄 Limpar</button>
+        <button class="btn btn-azul" onclick="fp2Prox()">➡️ Próxima</button>
+      </div>
+      <div class="feedback" id="fp2fb"></div>
+      <p style="margin-top:10px;font-size:0.85rem;color:#888;">Frase ${idx+1} de ${frases.length}</p>`;
+    window._fr2=fr;
+  }
+
+  function atualizarFrase(){
+    const d=document.getElementById('frm2');
+    if(!montada.length){d.textContent='Monte a frase aqui...';d.style.color='#aaa';return;}
+    d.style.color='var(--cor1d)';
+    d.innerHTML=montada.map((it,i)=>`<span class="pw-na-frase" onclick="fp2Rem(${i})">${it.p}</span>`).join('');
+  }
+
+  window.fp2Add=function(idx2,p){
+    if(resp)return;
+    const b=document.getElementById('fp2b'+idx2);
+    if(b.classList.contains('usada'))return;
+    b.classList.add('usada'); montada.push({idx:idx2,p});
+    atualizarFrase();
+  };
+  window.fp2Rem=function(pos){
+    if(resp)return;
+    const it=montada[pos];
+    const b=document.getElementById('fp2b'+it.idx);
+    if(b)b.classList.remove('usada');
+    montada.splice(pos,1); atualizarFrase();
+  };
+  window.fp2Clear=function(){montada=[];resp=false;document.querySelectorAll('.pw-frase').forEach(b=>b.classList.remove('usada'));atualizarFrase();const fb=document.getElementById('fp2fb');fb.className='feedback';fb.textContent='';};
+  window.fp2Verif=function(){
+    const fr=window._fr2; const fb=document.getElementById('fp2fb');
+    const tent=montada.map(it=>it.p).join(' ');
+    if(tent===fr.frase){resp=true;fb.className='feedback certo';fb.textContent='🎉 Perfeito! Frase correta!';pontos+=15;document.getElementById('fp2').textContent=pontos;addPontos(15);setTimeout(()=>{idx++;render();},1300);}
+    else{fb.className='feedback errado';fb.textContent='❌ Tente rearranjar as palavras! ('+fr.palavras.length+' palavras)';}
+  };
+  window.fp2Prox=function(){idx++;render();};
+  render();
+};
+
+/* ─────────────────────────────────────────
+   NÍVEL 2 — CAÇA-PALAVRAS
+───────────────────────────────────────── */
+function criarCacaPalavras(container, palavrasList, titulo, instrucao) {
+  const ROWS=12, COLS=14;
+  let grade=[],encontradas=new Set(),celsSel=new Set(),colocadas=[];
+
+  grade=Array.from({length:ROWS},()=>Array(COLS).fill(''));
+
+  function colocar(pw){
+    const letras=pw.replace(/[ÃÕÊÉÁÓÚÍÇ]/g,ch=>({Ã:'A',Õ:'O',Ê:'E',É:'E',Á:'A',Ó:'O',Ú:'U',Í:'I',Ç:'C'}[ch]||ch));
+    for(let t=0;t<200;t++){
+      const h=Math.random()>0.4;
+      if(h){const r=Math.floor(Math.random()*ROWS);const c=Math.floor(Math.random()*(COLS-letras.length));let ok=true;for(let k=0;k<letras.length;k++){if(grade[r][c+k]!==''&&grade[r][c+k]!==letras[k]){ok=false;break;}}if(ok){const ps=[];for(let k=0;k<letras.length;k++){grade[r][c+k]=letras[k];ps.push(`${r},${c+k}`);}colocadas.push({palavra:pw,posicoes:ps});return;}}
+      else{const r=Math.floor(Math.random()*(ROWS-letras.length));const c=Math.floor(Math.random()*COLS);let ok=true;for(let k=0;k<letras.length;k++){if(grade[r+k][c]!==''&&grade[r+k][c]!==letras[k]){ok=false;break;}}if(ok){const ps=[];for(let k=0;k<letras.length;k++){grade[r+k][c]=letras[k];ps.push(`${r+k},${c}`);}colocadas.push({palavra:pw,posicoes:ps});return;}}
+    }
+  }
+  palavrasList.forEach(colocar);
+  const abc='ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++)if(!grade[r][c])grade[r][c]=abc[Math.floor(Math.random()*abc.length)];
+
+  let sel1=null;
+
+  container.innerHTML=`
+    <div class="jogo-header-titulo">${titulo}</div>
+    <p class="jogo-instrucao">${instrucao}</p>
+    <div class="palavras-lista" id="cplista">
+      ${palavrasList.map(p=>`<span class="pw-tag" id="cptag${p}">${p}</span>`).join('')}
+    </div>
+    <div class="caca-wrapper">
+      <div class="caca-grade" id="cpgrade" style="grid-template-columns:repeat(${COLS},34px);">
+        ${grade.map((row,r)=>row.map((l,c)=>`<div class="caca-cel" id="cc${r}${c}" onclick="cacaClick(${r},${c})">${l}</div>`).join('')).join('')}
+      </div>
+    </div>
+    <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;">
+      <button class="btn btn-laranja" onclick="cacaLimpar()">🧹 Limpar seleção</button>
+      <button class="btn btn-azul" onclick="criarCacaPalavras(document.getElementById('jogo-conteudo'),[${palavrasList.map(p=>"'"+p+"'").join(',')}],'${titulo}','${instrucao}')">🔄 Nova grade</button>
+    </div>
+    <div class="feedback" id="cpfb"></div>`;
+
+  window.cacaClick=function(r,c){
+    const id=`${r},${c}`;
+    const el=document.getElementById(`cc${r}${c}`);
+    if(celsSel.has(id))return;
+    if(!sel1){sel1={r,c};el.classList.add('sel');}
+    else{
+      const a=sel1,b={r,c};
+      sel1=null;
+      let encontrou=false;
+      for(const item of colocadas){
+        if(encontradas.has(item.palavra))continue;
+        const p1=item.posicoes[0],pu=item.posicoes[item.posicoes.length-1];
+        const [pr,pc]=p1.split(',').map(Number);
+        const [ur,uc]=pu.split(',').map(Number);
+        const m1=(a.r===pr&&a.c===pc&&b.r===ur&&b.c===uc);
+        const m2=(b.r===pr&&b.c===pc&&a.r===ur&&a.c===uc);
+        if(m1||m2){
+          encontradas.add(item.palavra);
+          item.posicoes.forEach(pos=>{celsSel.add(pos);const[rr,cc]=pos.split(',').map(Number);const e=document.getElementById(`cc${rr}${cc}`);if(e){e.classList.remove('sel');e.classList.add('found');}});
+          const tag=document.getElementById('cptag'+item.palavra);if(tag)tag.classList.add('found');
+          const fb=document.getElementById('cpfb');fb.className='feedback certo';fb.textContent='🎉 Encontrou: '+item.palavra+'!';
+          encontrou=true;
+          if(encontradas.size===colocadas.length){fb.textContent='🏆 Parabéns! Você encontrou todas as palavras!';addPontos(20);}
+          break;
+        }
+      }
+      if(!encontrou){
+        document.querySelectorAll('.caca-cel.sel').forEach(e=>e.classList.remove('sel'));
+        const fb=document.getElementById('cpfb');fb.className='feedback info';fb.textContent='🔎 Não é essa! Tente novamente.';
+        setTimeout(()=>{fb.className='feedback';fb.textContent='';},1500);
+      }
+    }
+  };
+  window.cacaLimpar=function(){sel1=null;document.querySelectorAll('.caca-cel.sel').forEach(e=>e.classList.remove('sel'));};
+}
+
+JOGOS.caca2 = function(c) {
+  criarCacaPalavras(c,['TRABALHO','SALARIO','EMPREGO','DINHEIRO','CARTEIRA','DIREITOS','FERIAS','PROFISSAO'],'🔍 Caça-Palavras','Clique na primeira e última letra de cada palavra!');
+};
+
+/* ─────────────────────────────────────────
+   NÍVEL 2 — DUO FINANCEIRO
+───────────────────────────────────────── */
+JOGOS.duo2 = function(c) {
+  const rodadas=[
+    {emoji:'💰',pergunta:'O que é SALÁRIO MÍNIMO?',ops:[{t:'Valor mínimo que um trabalhador pode receber',ok:true},{t:'O maior salário possível',ok:false},{t:'Um tipo de imposto',ok:false},{t:'Um benefício para aposentados',ok:false}]},
+    {emoji:'🏖️',pergunta:'O que são FÉRIAS?',ops:[{t:'30 dias de descanso por ano com salário pago',ok:true},{t:'Dias sem trabalho sem receber',ok:false},{t:'Viagem obrigatória',ok:false},{t:'Descanso de final de semana',ok:false}]},
+    {emoji:'💳',pergunta:'O que é FGTS?',ops:[{t:'Fundo de garantia depositado pelo empregador',ok:true},{t:'Um cartão de crédito',ok:false},{t:'Um tipo de empréstimo',ok:false},{t:'Uma conta poupança normal',ok:false}]},
+    {emoji:'📋',pergunta:'O que é CLT?',ops:[{t:'Lei que protege os trabalhadores',ok:true},{t:'Um tipo de escola',ok:false},{t:'Um emprego específico',ok:false},{t:'Uma empresa do governo',ok:false}]},
+    {emoji:'🆘',pergunta:'O que é SEGURO DESEMPREGO?',ops:[{t:'Benefício para quem foi demitido sem justa causa',ok:true},{t:'Dinheiro para pagar dívidas',ok:false},{t:'Um tipo de cartão',ok:false},{t:'Salário extra de dezembro',ok:false}]},
+  ];
+  let idx=0,vidas=3,streak=0,pontos=0,resp=false;
+
+  function render(){
+    if(vidas<=0){c.innerHTML=`<div class="resultado-box"><div class="result-emoji">😢</div><div class="result-titulo">Sem vidas!</div><p class="result-pontos">Você fez ${pontos} pontos.</p><button class="btn btn-verde" onclick="abrirJogo('duo2')">🔄 Recomeçar</button></div>`;return;}
+    if(idx>=rodadas.length){resultadoFinal(pontos,rodadas.length*10,c);return;}
+    const r=rodadas[idx]; resp=false;
+    const ops=embaralhar(r.ops);
+    c.innerHTML=`
+      <div class="jogo-header-titulo">🦜 Duolingo Financeiro</div>
+      <div class="duo-vidas">${[1,2,3].map(i=>`<span class="vida ${i>vidas?'perdida':''}">❤️</span>`).join('')}</div>
+      <div class="duo-streak">🔥 Sequência: ${streak}</div>
+      <div class="duo-card">
+        <span class="duo-emoji">${r.emoji}</span>
+        <div class="duo-frase">${r.pergunta}</div>
+        <div class="duo-sub">Escolha a resposta correta:</div>
+      </div>
+      <div class="duo-ops">
+        ${ops.map((o,i)=>`<button class="duo-op" onclick="duo2Resp(this,${o.ok})">${['🅰️','🅱️','🅲️','🅳️'][i]} ${o.t}</button>`).join('')}
+      </div>
+      <div class="feedback" id="d2fb"></div>
+      <p style="margin-top:10px;font-size:0.85rem;color:#888;">Pergunta ${idx+1} de ${rodadas.length}</p>`;
+    window._duo2r=rodadas[idx];
+  }
+  window.duo2Resp=function(btn,ok){
+    if(resp)return;resp=true;
+    document.querySelectorAll('.duo-op').forEach(b=>b.disabled=true);
+    const fb=document.getElementById('d2fb');
+    if(ok){btn.classList.add('certa');streak++;pontos+=streak>2?15:10;addPontos(10);fb.className='feedback certo';fb.textContent='🎉 Correto!'+(streak>2?' 🔥 Bônus!':'');setTimeout(()=>{idx++;render();},1400);}
+    else{btn.classList.add('errada');vidas--;streak=0;fb.className='feedback errado';fb.textContent='❌ Incorreto! -1 vida';setTimeout(()=>{idx++;render();},1600);}
+  };
+  render();
+};
+
+/* ─────────────────────────────────────────
+   NÍVEL 2 — VOF (DIREITOS)
+───────────────────────────────────────── */
+JOGOS.vof2 = function(c) {
+  const itens=[
+    {frase:'O trabalhador com carteira assinada tem direito a férias.',correto:'V',exp:'Verdadeiro! São 30 dias de descanso por ano com salário pago.'},
+    {frase:'O salário mínimo pode ser pago abaixo do valor estabelecido por lei.',correto:'F',exp:'Falso! Nenhum trabalhador pode receber menos do que o salário mínimo.'},
+    {frase:'O FGTS é um fundo depositado pelo empregador para o trabalhador.',correto:'V',exp:'Verdadeiro! O FGTS é um depósito mensal que o empregador faz.'},
+    {frase:'O trabalho informal garante os mesmos direitos que o formal.',correto:'F',exp:'Falso! O trabalho informal não tem os mesmos direitos como férias e FGTS.'},
+    {frase:'A jornada máxima de trabalho no Brasil é de 8 horas por dia.',correto:'V',exp:'Verdadeiro! A CLT estabelece no máximo 8h por dia e 44h por semana.'},
+    {frase:'O seguro desemprego é pago a quem foi demitido com justa causa.',correto:'F',exp:'Falso! O seguro desemprego é para quem foi demitido SEM justa causa.'},
+  ];
+  let acertos=0;
+  c.innerHTML=`
+    <div class="jogo-header-titulo">✅ V ou F — Direitos</div>
+    <p class="jogo-instrucao">Leia cada afirmação e escolha: Verdadeiro ou Falso!</p>
+    <div class="placar-jogo">⭐ Acertos: <span id="vp2">0</span> de ${itens.length}</div>
+    ${itens.map((it,i)=>`
+      <div class="vof-item" id="v2i${i}">
+        <div class="vof-frase">📌 ${it.frase}</div>
+        <div class="vof-btns">
+          <button class="vof-v" id="v2v${i}" onclick="vof2Resp(${i},'V')">✅ Verdadeiro</button>
+          <button class="vof-f" id="v2f${i}" onclick="vof2Resp(${i},'F')">❌ Falso</button>
+        </div>
+        <div class="vof-resultado" id="v2r${i}"></div>
+      </div>`).join('')}`;
+  window.vof2Resp=function(i,r){
+    const it=itens[i];
+    document.getElementById('v2v'+i).disabled=true;
+    document.getElementById('v2f'+i).disabled=true;
+    const res=document.getElementById('v2r'+i);
+    const box=document.getElementById('v2i'+i);
+    res.style.display='block';
+    if(r===it.correto){acertos++;box.classList.add('certa');res.style.color='var(--cor1d)';res.textContent='🎉 '+it.exp;document.getElementById('vp2').textContent=acertos;addPontos(10);}
+    else{box.classList.add('errada');res.style.color='var(--cor5d)';res.textContent='❌ '+it.exp;}
+  };
+};
+
+/* ─────────────────────────────────────────
+   NÍVEL 3 — COMPLETAR FRASE
+───────────────────────────────────────── */
+JOGOS.completar3 = function(c) {
+  const itens=[
+    {antes:'O trabalho formal tem carteira',depois:'garantida pela CLT.',opcoes:['assinada','perdida','cancelada','suspensa'],correto:'assinada'},
+    {antes:'A Inteligência Artificial permite que máquinas',depois:'e tomem decisões.',opcoes:['voem','aprendam','descansem','comprem'],correto:'aprendam'},
+    {antes:'O FGTS é um fundo que o',depois:'deposita mensalmente.',opcoes:['trabalhador','sindicato','empregador','governo'],correto:'empregador'},
+    {antes:'O motorista de aplicativo usa um',depois:'para receber corridas.',opcoes:['rádio','jornal','celular','notebook'],correto:'celular'},
+    {antes:'Na regra 50-30-20, 20% da renda deve ser destinado à',depois:'.',opcoes:['diversão','poupança','alimentação','vestuário'],correto:'poupança'},
+    {antes:'A IA muda o trabalho, mas também',depois:'novos empregos.',opcoes:['destrói','elimina','cria','retira'],correto:'cria'},
+  ];
+  let acertos=0;
+  c.innerHTML=`
+    <div class="jogo-header-titulo">✍️ Complete as Frases</div>
+    <p class="jogo-instrucao">Clique na opção correta para completar cada frase!</p>
+    <div class="placar-jogo">⭐ Acertos: <span id="cp3">0</span> de ${itens.length}</div>
+    ${itens.map((it,i)=>`
+      <div style="background:var(--cinza);border-radius:12px;padding:16px;margin-bottom:14px;" id="cf3i${i}">
+        <p style="font-size:1rem;font-weight:700;margin-bottom:12px;line-height:1.8;">
+          ${it.antes} <strong id="cf3resp${i}" style="color:var(--cor2);">___</strong> ${it.depois}
+        </p>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;">
+          ${embaralhar(it.opcoes).map(o=>`<button class="opcao-btn" id="cf3btn${i}${o}" onclick="cf3Resp(${i},'${o}','${it.correto}')">${o}</button>`).join('')}
+        </div>
+        <div class="vof-resultado" id="cf3r${i}"></div>
+      </div>`).join('')}`;
+  window.cf3Resp=function(i,esc,corr){
+    document.querySelectorAll(`[id^="cf3btn${i}"]`).forEach(b=>b.disabled=true);
+    const res=document.getElementById('cf3r'+i);
+    const box=document.getElementById('cf3i'+i);
+    const resp=document.getElementById('cf3resp'+i);
+    res.style.display='block';
+    if(esc===corr){acertos++;resp.textContent=corr;resp.style.color='var(--cor1d)';box.style.borderLeft='4px solid var(--cor1)';res.style.color='var(--cor1d)';res.textContent='🎉 Correto!';document.getElementById('cp3').textContent=acertos;addPontos(10);document.getElementById('cf3btn'+i+corr).classList.add('certa');}
+    else{resp.textContent=corr;resp.style.color='var(--cor5d)';box.style.borderLeft='4px solid var(--cor5)';res.style.color='var(--cor5d)';res.textContent='❌ A resposta correta era: '+corr;document.getElementById('cf3btn'+i+esc).classList.add('errada');document.getElementById('cf3btn'+i+corr).classList.add('certa');}
+  };
+};
+
+/* ─────────────────────────────────────────
+   NÍVEL 3 — LIGUE AS COLUNAS
+───────────────────────────────────────── */
+JOGOS.ligar3 = function(c) {
+  const pares=[
+    {a:'DATILÓGRAFO',b:'Digitava textos na máquina de escrever'},
+    {a:'TELEFONISTA',b:'Conectava chamadas telefônicas'},
+    {a:'LANTERNINHA',b:'Guiava pessoas no cinema com lanterna'},
+    {a:'PROGRAMADOR',b:'Cria aplicativos e sites'},
+    {a:'CHATBOT',b:'Programa que conversa automaticamente'},
+    {a:'FGTS',b:'Fundo de garantia depositado pelo empregador'},
+  ];
+  let selA=null,selB=null,acertos=0,erros=0,respondidos=new Set();
+
+  function render(){
+    const emb=embaralhar([...pares].map(p=>p.b));
+    c.innerHTML=`
+      <div class="jogo-header-titulo">🔗 Ligue as Colunas</div>
+      <p class="jogo-instrucao">Clique em uma profissão e depois na sua descrição!</p>
+      <div class="placar-jogo">⭐ Acertos: <span id="lp3">${acertos}</span> de ${pares.length}</div>
+      <div class="ligar-container">
+        <div class="ligar-col" id="colA">
+          ${pares.map((p,i)=>`<div class="ligar-item" id="la${i}" onclick="ligar3A(${i})">${p.a}</div>`).join('')}
+        </div>
+        <div class="ligar-col" id="colB">
+          ${emb.map((b2,i)=>`<div class="ligar-item" id="lb${i}" data-val="${b2}" onclick="ligar3B(${i})">${b2}</div>`).join('')}
+        </div>
+      </div>
+      <div class="feedback" id="l3fb"></div>`;
+    window._pares3=pares; window._embB3=emb;
+  }
+
+  window.ligar3A=function(i){
+    if(respondidos.has('A'+i))return;
+    if(selA===i){selA=null;document.getElementById('la'+i).classList.remove('sel');return;}
+    document.querySelectorAll('[id^="la"]').forEach(e=>e.classList.remove('sel'));
+    selA=i; document.getElementById('la'+i).classList.add('sel');
+    if(selB!==null)verificarLigar3();
+  };
+  window.ligar3B=function(i){
+    if(respondidos.has('B'+i))return;
+    if(selB===i){selB=null;document.getElementById('lb'+i).classList.remove('sel');return;}
+    document.querySelectorAll('[id^="lb"]').forEach(e=>e.classList.remove('sel'));
+    selB=i; document.getElementById('lb'+i).classList.add('sel');
+    if(selA!==null)verificarLigar3();
+  };
+
+  function verificarLigar3(){
+    const p=window._pares3[selA]; const bVal=window._embB3[selB];
+    const fb=document.getElementById('l3fb');
+    if(p.b===bVal){
+      acertos++;respondidos.add('A'+selA);respondidos.add('B'+selB);
+      document.getElementById('la'+selA).classList.replace('sel','certa');
+      document.getElementById('lb'+selB).classList.replace('sel','certa');
+      document.getElementById('lp3').textContent=acertos;
+      fb.className='feedback certo';fb.textContent='🎉 Correto! '+p.a+' = '+bVal;
+      addPontos(10);
+      if(acertos===pares.length){setTimeout(()=>{resultadoFinal(acertos*10,pares.length*10,c);},1000);}
+    } else {
+      erros++;
+      document.getElementById('la'+selA).classList.replace('sel','errada');
+      document.getElementById('lb'+selB).classList.replace('sel','errada');
+      fb.className='feedback errado';fb.textContent='❌ Não é esse par! Tente novamente.';
+      setTimeout(()=>{document.getElementById('la'+selA).classList.replace('errada','');document.getElementById('lb'+selB).classList.replace('errada','');fb.className='feedback';fb.textContent='';},1200);
+    }
+    selA=null; selB=null;
+  }
+  render();
+};
+
+/* ─────────────────────────────────────────
+   NÍVEL 3 — QUIZ DO TRABALHO
+───────────────────────────────────────── */
+JOGOS.quiz3 = function(c) {
+  const pergs=[
+    {p:'O que é Inteligência Artificial?',ops:['Tecnologia que permite máquinas aprenderem','Um robô físico','Um videogame','Um tipo de celular'],c:0},
+    {p:'O que fazia o Datilógrafo?',ops:['Conectava chamadas telefônicas','Guiava pessoas no cinema','Digitava textos na máquina de escrever','Acendia lampiões nas ruas'],c:2},
+    {p:'Qual é um direito do trabalhador formal no Brasil?',ops:['Apenas salário','Férias, FGTS e salário mínimo','Apenas carteira assinada','Nenhum direito específico'],c:1},
+    {p:'O que é trabalho informal?',ops:['Trabalho com carteira assinada','Trabalho voluntário','Trabalho sem carteira assinada','Trabalho em casa'],c:2},
+    {p:'O que significa CLT?',ops:['Certidão de Licença Trabalhista','Consolidação das Leis do Trabalho','Contrato de Licença Temporária','Central de Legislação Trabalhista'],c:1},
+    {p:'Qual profissão surgiu com as redes sociais?',ops:['Datilógrafo','Telefonista','Criador de Conteúdo Digital','Lanterninha'],c:2},
+    {p:'O que são juros compostos?',ops:['Juros que diminuem com o tempo','Juros que incidem sobre o valor + juros anteriores','Tipo de desconto','Taxa fixa anual'],c:1},
+    {p:'Na regra 50-30-20, quanto vai para necessidades?',ops:['30%','20%','50%','10%'],c:2},
+    {p:'O motorista de aplicativo tem qual característica?',ops:['Carteira assinada obrigatória','Escolhe seus próprios horários','Salário fixo garantido','Férias remuneradas'],c:1},
+    {p:'O que é ativo financeiro?',ops:['Algo que tira dinheiro do bolso','Algo que coloca dinheiro no bolso','Uma dívida bancária','Um tipo de imposto'],c:1},
+    {p:'Qual aplicativo é usado por motoristas de transporte?',ops:['Instagram','TikTok','Uber ou 99','YouTube'],c:2},
+    {p:'Aprender novas habilidades ajuda o trabalhador a:',ops:['Ficar parado no mesmo emprego','Se adaptar às mudanças tecnológicas','Evitar o computador','Trabalhar menos'],c:1},
+  ];
+  let idx=0,acertos=0,resp=false;
+
+  function render(){
+    document.getElementById('jogo-conteudo').innerHTML='';
+    if(idx>=pergs.length){resultadoFinal(acertos,pergs.length,document.getElementById('jogo-conteudo'));return;}
+    const p=pergs[idx]; resp=false;
+    const pct=Math.round(idx/pergs.length*100);
+    document.getElementById('jogo-conteudo').innerHTML=`
+      <div class="jogo-header-titulo">❓ Quiz do Trabalho</div>
+      <div class="placar-jogo">⭐ Acertos: ${acertos}/${pergs.length}</div>
+      <div class="barra-prog"><div class="barra-fill" style="width:${pct}%"></div></div>
+      <div class="quiz-pergunta">❓ ${p.p}</div>
+      <div class="quiz-ops">
+        ${p.ops.map((o,i)=>`<button class="quiz-op" onclick="q3Resp(this,${i},${p.c})">${String.fromCharCode(65+i)}) ${o}</button>`).join('')}
+      </div>
+      <div class="feedback" id="q3fb"></div>
+      <div class="quiz-nav">
+        <span class="quiz-prog">Pergunta ${idx+1} de ${pergs.length}</span>
+        <button class="btn btn-azul" onclick="q3Prox()">➡️ Próxima</button>
+      </div>`;
+  }
+  window.q3Resp=function(btn,esc,corr){
+    if(resp)return;resp=true;
+    document.querySelectorAll('.quiz-op').forEach(b=>b.disabled=true);
+    const fb=document.getElementById('q3fb');
+    if(esc===corr){btn.classList.add('certa');acertos++;addPontos(10);fb.className='feedback certo';fb.textContent='🎉 Correto!';}
+    else{btn.classList.add('errada');document.querySelectorAll('.quiz-op')[corr].classList.add('certa');fb.className='feedback errado';fb.textContent='❌ A resposta certa está em verde.';}
+  };
+  window.q3Prox=function(){idx++;render();};
+  render();
+};
+
+/* ─────────────────────────────────────────
+   NÍVEL 3 — CAÇA-PALAVRAS FINANÇAS
+───────────────────────────────────────── */
+JOGOS.caca3 = function(c) {
+  criarCacaPalavras(c,['POUPANCA','ORCAMENTO','INVESTIR','DIVIDA','SALARIO','ECONOMIA','CARTAO','JUROS'],'🔍 Caça-Palavras Financeiro','Encontre as palavras de educação financeira!');
+};
+
+/* ─────────────────────────────────────────
+   NÍVEL 3 — DUO DIREITOS
+───────────────────────────────────────── */
+JOGOS.duo3 = function(c) {
+  const rodadas=[
+    {emoji:'📜',pergunta:'Quantas horas máximas por dia pode trabalhar?',ops:[{t:'8 horas por dia',ok:true},{t:'12 horas por dia',ok:false},{t:'6 horas por dia',ok:false},{t:'10 horas por dia',ok:false}]},
+    {emoji:'🌴',pergunta:'Quantos dias de férias tem o trabalhador?',ops:[{t:'30 dias por ano',ok:true},{t:'15 dias por ano',ok:false},{t:'10 dias por semestre',ok:false},{t:'7 dias por ano',ok:false}]},
+    {emoji:'👶',pergunta:'Qual é a duração da licença maternidade?',ops:[{t:'120 dias',ok:true},{t:'30 dias',ok:false},{t:'60 dias',ok:false},{t:'180 dias',ok:false}]},
+    {emoji:'💼',pergunta:'Para que serve o seguro desemprego?',ops:[{t:'Ajudar quem foi demitido sem justa causa',ok:true},{t:'Pagar dívidas',ok:false},{t:'Comprar casa',ok:false},{t:'Pagar impostos',ok:false}]},
+    {emoji:'💰',pergunta:'O que o trabalhador recebe em dezembro extra?',ops:[{t:'13º salário',ok:true},{t:'14º salário',ok:false},{t:'Bônus de férias',ok:false},{t:'Nenhum extra',ok:false}]},
+  ];
+  let idx=0,vidas=3,streak=0,pontos=0,resp=false;
+  function render(){
+    if(vidas<=0||idx>=rodadas.length){resultadoFinal(pontos,rodadas.length*10,c);return;}
+    const r=rodadas[idx]; resp=false;
+    const ops=embaralhar(r.ops);
+    c.innerHTML=`
+      <div class="jogo-header-titulo">🦜 Duolingo dos Direitos</div>
+      <div class="duo-vidas">${[1,2,3].map(i=>`<span class="vida ${i>vidas?'perdida':''}">❤️</span>`).join('')}</div>
+      <div class="duo-streak">🔥 Sequência: ${streak}</div>
+      <div class="duo-card">
+        <span class="duo-emoji">${r.emoji}</span>
+        <div class="duo-frase">${r.pergunta}</div>
+      </div>
+      <div class="duo-ops">
+        ${ops.map((o,i)=>`<button class="duo-op" onclick="duo3Resp(this,${o.ok})">${['🅰️','🅱️','🅲️','🅳️'][i]} ${o.t}</button>`).join('')}
+      </div>
+      <div class="feedback" id="d3fb"></div>`;
+  }
+  window.duo3Resp=function(btn,ok){
+    if(resp)return;resp=true;
+    document.querySelectorAll('.duo-op').forEach(b=>b.disabled=true);
+    const fb=document.getElementById('d3fb');
+    if(ok){btn.classList.add('certa');streak++;pontos+=10;addPontos(10);fb.className='feedback certo';fb.textContent='🎉 Correto!';setTimeout(()=>{idx++;render();},1400);}
+    else{btn.classList.add('errada');vidas--;streak=0;fb.className='feedback errado';fb.textContent='❌ Errou! -1 vida';setTimeout(()=>{idx++;render();},1600);}
+  };
+  render();
+};
+
+/* ─────────────────────────────────────────
+   NÍVEL 3 — MONTE TEXTOS
+───────────────────────────────────────── */
+JOGOS.frase3 = function(c) {
+  const frases=[
+    {palavras:['A','INTELIGÊNCIA','ARTIFICIAL','APRENDE','COM','OS','DADOS'],frase:'A INTELIGÊNCIA ARTIFICIAL APRENDE COM OS DADOS'},
+    {palavras:['O','TRABALHADOR','TEM','DIREITO','A','FÉRIAS','REMUNERADAS'],frase:'O TRABALHADOR TEM DIREITO A FÉRIAS REMUNERADAS'},
+    {palavras:['GUARDAR','DINHEIRO','É','O','PRIMEIRO','PASSO','DA','LIBERDADE'],frase:'GUARDAR DINHEIRO É O PRIMEIRO PASSO DA LIBERDADE'},
+    {palavras:['A','IA','MUDA','O','TRABALHO','MAS','NÃO','ACABA','COM','ELE'],frase:'A IA MUDA O TRABALHO MAS NÃO ACABA COM ELE'},
+  ];
+  let idx=0,montada=[],pontos=0,resp=false;
+
+  function render(){
+    if(idx>=frases.length){resultadoFinal(pontos,frases.length*15,c);return;}
+    const fr=frases[idx]; montada=[]; resp=false;
+    const emb=embaralhar([...fr.palavras]);
+    c.innerHTML=`
+      <div class="jogo-header-titulo">📝 Monte Textos</div>
+      <p class="jogo-instrucao">Monte frases sobre as apostilas clicando nas palavras!</p>
+      <div class="placar-jogo">⭐ Pontos: <span id="ft3p">${pontos}</span></div>
+      <div class="frase-montada" id="ft3m"></div>
+      <div class="sil-grid" id="ft3g">
+        ${emb.map((p,i)=>`<button class="pw-frase" id="ft3b${i}" onclick="ft3Add(${i},'${p}')">${p}</button>`).join('')}
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;">
+        <button class="btn btn-verde" onclick="ft3Verif()">✅ Verificar</button>
+        <button class="btn btn-laranja" onclick="ft3Clr()">🔄 Limpar</button>
+        <button class="btn btn-azul" onclick="ft3Prox()">➡️ Próxima</button>
+      </div>
+      <div class="feedback" id="ft3fb"></div>
+      <p style="margin-top:10px;font-size:0.85rem;color:#888;">Frase ${idx+1} de ${frases.length}</p>`;
+    window._ft3=fr;
+  }
+  function ft3Atu(){
+    const d=document.getElementById('ft3m');
+    if(!montada.length){d.textContent='Monte a frase aqui...';d.style.color='#aaa';return;}
+    d.style.color='var(--cor1d)';
+    d.innerHTML=montada.map((it,i)=>`<span class="pw-na-frase" onclick="ft3Rem(${i})">${it.p}</span>`).join('');
+  }
+  window.ft3Add=function(i2,p){if(resp)return;const b=document.getElementById('ft3b'+i2);if(b.classList.contains('usada'))return;b.classList.add('usada');montada.push({idx:i2,p});ft3Atu();};
+  window.ft3Rem=function(pos){if(resp)return;const it=montada[pos];const b=document.getElementById('ft3b'+it.idx);if(b)b.classList.remove('usada');montada.splice(pos,1);ft3Atu();};
+  window.ft3Clr=function(){montada=[];resp=false;document.querySelectorAll('.pw-frase').forEach(b=>b.classList.remove('usada'));ft3Atu();const fb=document.getElementById('ft3fb');fb.className='feedback';fb.textContent='';};
+  window.ft3Verif=function(){
+    const fr=window._ft3;const fb=document.getElementById('ft3fb');
+    const tent=montada.map(it=>it.p).join(' ');
+    if(tent===fr.frase){resp=true;fb.className='feedback certo';fb.textContent='🎉 Perfeito!';pontos+=15;document.getElementById('ft3p').textContent=pontos;addPontos(15);setTimeout(()=>{idx++;render();},1200);}
+    else{fb.className='feedback errado';fb.textContent='❌ Tente rearranjar! ('+fr.palavras.length+' palavras)';}
+  };
+  window.ft3Prox=function(){idx++;render();};
+  render();
+};
+
+/* ─────────────────────────────────────────
+   NÍVEL 4 — QUIZ FINANCEIRO
+───────────────────────────────────────── */
+JOGOS.quiz4 = function(c) {
+  const pergs=[
+    {p:'O que é ativo financeiro (Kiyosaki)?',ops:['Algo que coloca dinheiro no bolso','Algo que tira dinheiro','Uma dívida','Um tipo de imposto'],c:0},
+    {p:'Qual é a taxa de juros do cartão de crédito rotativo no Brasil?',ops:['Cerca de 10% ao ano','Cerca de 400% ao ano','Cerca de 2% ao mês','Cerca de 50% ao ano'],c:1},
+    {p:'O que é o método "Bola de Neve" para dívidas?',ops:['Ignorar as dívidas menores','Quitar da menor para a maior dívida','Pagar só o mínimo','Fazer um novo empréstimo'],c:1},
+    {p:'Quanto deve ir para poupança na regra 50-30-20?',ops:['50%','30%','10%','20%'],c:3},
+    {p:'O que são juros compostos?',ops:['Juros que caem com o tempo','Juros que incidem sobre capital+juros anteriores','Taxa fixa sem variação','Desconto especial'],c:1},
+    {p:'O que é renda passiva?',ops:['Renda do trabalho ativo','Dinheiro que entra sem trabalhar ativamente','Salário mínimo','Benefício do governo'],c:1},
+    {p:'Qual o risco da poupança segundo a tabela?',ops:['Alto','Médio','Muito baixo','Variável'],c:2},
+    {p:'Quanto Ana teria aos 60 anos guardando R$200/mês desde os 20?',ops:['Cerca de R$ 36 mil','Cerca de R$ 130 mil','Cerca de R$ 1,3 milhão','Cerca de R$ 500 mil'],c:2},
+    {p:'O que é MEI?',ops:['Microempreendedor Individual formalizado','Tipo de empréstimo','Benefício do governo','Cartão de crédito'],c:0},
+    {p:'O que fazer ANTES de qualquer compra (consumo consciente)?',ops:['Comprar logo antes de acabar','Perguntar: preciso ou quero?','Parcelar em muitas vezes','Pedir emprestado'],c:1},
+  ];
+  let idx=0,acertos=0,resp=false;
+
+  function render(){
+    document.getElementById('jogo-conteudo').innerHTML='';
+    if(idx>=pergs.length){resultadoFinal(acertos,pergs.length,document.getElementById('jogo-conteudo'));return;}
+    const p=pergs[idx]; resp=false;
+    const pct=Math.round(idx/pergs.length*100);
+    document.getElementById('jogo-conteudo').innerHTML=`
+      <div class="jogo-header-titulo">💰 Quiz Financeiro</div>
+      <div class="placar-jogo">⭐ Acertos: ${acertos}/${pergs.length}</div>
+      <div class="barra-prog"><div class="barra-fill" style="width:${pct}%"></div></div>
+      <div class="quiz-pergunta">💰 ${p.p}</div>
+      <div class="quiz-ops">
+        ${p.ops.map((o,i)=>`<button class="quiz-op" onclick="q4Resp(this,${i},${p.c})">${String.fromCharCode(65+i)}) ${o}</button>`).join('')}
+      </div>
+      <div class="feedback" id="q4fb"></div>
+      <div class="quiz-nav">
+        <span class="quiz-prog">Pergunta ${idx+1} de ${pergs.length}</span>
+        <button class="btn btn-roxo" onclick="q4Prox()">➡️ Próxima</button>
+      </div>`;
+  }
+  window.q4Resp=function(btn,esc,corr){
+    if(resp)return;resp=true;
+    document.querySelectorAll('.quiz-op').forEach(b=>b.disabled=true);
+    const fb=document.getElementById('q4fb');
+    if(esc===corr){btn.classList.add('certa');acertos++;addPontos(10);fb.className='feedback certo';fb.textContent='🎉 Correto!';}
+    else{btn.classList.add('errada');document.querySelectorAll('.quiz-op')[corr].classList.add('certa');fb.className='feedback errado';fb.textContent='❌ Resposta correta está em verde.';}
+  };
+  window.q4Prox=function(){idx++;render();};
+  render();
+};
+
+/* ─────────────────────────────────────────
+   NÍVEL 4 — CALCULE SEU SALÁRIO
+───────────────────────────────────────── */
+JOGOS.calcular4 = function(c) {
+  c.innerHTML=`
+    <div class="jogo-header-titulo">🧮 Calcule Seu Salário</div>
+    <p class="jogo-instrucao">Simule um orçamento real baseado na apostila de Educação Financeira!</p>
+    <div style="background:var(--cinza);border-radius:14px;padding:20px;margin-bottom:16px;">
+      <h3 style="font-family:'Fredoka One',cursive;color:var(--cor3);margin-bottom:14px;">💼 Informe seu salário:</h3>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap;">
+        <label style="font-weight:700;">R$</label>
+        <input id="sal-inp" type="number" min="0" max="99999" value="1700" style="border:3px solid var(--cor3);border-radius:10px;padding:10px;font-size:1.1rem;font-weight:800;width:140px;font-family:'Nunito',sans-serif;outline:none;">
+        <button class="btn btn-laranja" onclick="calcSalario()">📊 Calcular</button>
+      </div>
+      <p style="font-size:0.85rem;color:#888;font-weight:600;">Regra 50-30-20 da apostila: 50% necessidades, 30% desejos, 20% poupança</p>
+    </div>
+    <div id="calc-resultado"></div>`;
+
+  window.calcSalario=function(){
+    const sal=parseFloat(document.getElementById('sal-inp').value)||0;
+    const nec=sal*0.5, des=sal*0.3, pou=sal*0.2;
+    const hora=sal/220;
+    const div=document.getElementById('calc-resultado');
+    div.innerHTML=`
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:20px;">
+        <div class="banco-stat" style="background:#d4edda;"><div class="banco-stat-val" style="color:var(--cor1);">R$ ${nec.toFixed(2)}</div><div class="banco-stat-label">50% — Necessidades<br>(aluguel, comida, contas)</div></div>
+        <div class="banco-stat" style="background:#d1ecf1;"><div class="banco-stat-val" style="color:var(--cor2);">R$ ${des.toFixed(2)}</div><div class="banco-stat-label">30% — Desejos<br>(lazer, roupas, restaurante)</div></div>
+        <div class="banco-stat" style="background:#fff3cd;"><div class="banco-stat-val" style="color:var(--cor3);">R$ ${pou.toFixed(2)}</div><div class="banco-stat-label">20% — Poupança<br>(reserva, investimentos)</div></div>
+        <div class="banco-stat"><div class="banco-stat-val">R$ ${hora.toFixed(2)}</div><div class="banco-stat-label">Valor da sua hora<br>(${sal}/220h)</div></div>
+      </div>
+      <div style="background:linear-gradient(135deg,#fff3cd,#fef9e7);border:2px solid var(--amarelo);border-radius:14px;padding:16px;">
+        <p style="font-weight:800;color:var(--cor3);margin-bottom:12px;">💡 Em horas de trabalho, isso custa:</p>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:8px;">
+          <li style="font-weight:700;">🍕 Pizza R$ 60 = <strong>${(60/hora).toFixed(1)} horas</strong> de trabalho</li>
+          <li style="font-weight:700;">👟 Tênis R$ 300 = <strong>${(300/hora).toFixed(1)} horas</strong> de trabalho</li>
+          <li style="font-weight:700;">📱 Celular R$ 1.500 = <strong>${(1500/hora).toFixed(1)} horas</strong> de trabalho</li>
+          <li style="font-weight:700;">💻 Notebook R$ 3.000 = <strong>${(3000/hora).toFixed(1)} horas</strong> de trabalho</li>
+        </ul>
+      </div>
+      <div style="margin-top:14px;background:#e8f0fe;border-radius:14px;padding:16px;">
+        <p style="font-weight:800;color:var(--cor2);margin-bottom:8px;">📈 Se guardar R$ ${pou.toFixed(0)}/mês no Tesouro (11% ao ano):</p>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:6px;">
+          <li style="font-weight:700;">Em 1 ano: <strong>R$ ${(pou*12*1.11).toFixed(2)}</strong></li>
+          <li style="font-weight:700;">Em 5 anos: <strong>R$ ${(pou*((Math.pow(1.11/12+1,60)-1)/(0.11/12))).toFixed(2)}</strong></li>
+          <li style="font-weight:700;">Em 10 anos: <strong>R$ ${(pou*((Math.pow(1.11/12+1,120)-1)/(0.11/12))).toFixed(2)}</strong></li>
+        </ul>
+      </div>`;
+    addPontos(20);
+  };
+  window.calcSalario();
+};
+
+/* ─────────────────────────────────────────
+   NÍVEL 4 — DUO AVANÇADO (IA)
+───────────────────────────────────────── */
+JOGOS.duo4 = function(c) {
+  const rodadas=[
+    {emoji:'🤖',pergunta:'O que faz um Programador de IA?',ops:[{t:'Cria, treina e aprimora sistemas de IA',ok:true},{t:'Conserta computadores físicos',ok:false},{t:'Vende eletrônicos',ok:false},{t:'Faz manutenção elétrica',ok:false}]},
+    {emoji:'🔧',pergunta:'O que faz o Técnico em Robótica?',ops:[{t:'Monta, programa e conserta robôs',ok:true},{t:'Escreve livros sobre robôs',ok:false},{t:'Filma robôs para TV',ok:false},{t:'Vende brinquedos de robô',ok:false}]},
+    {emoji:'📊',pergunta:'O que são dados na IA?',ops:[{t:'Informações que a IA usa para aprender',ok:true},{t:'Papéis impressos',ok:false},{t:'Tipo de moeda digital',ok:false},{t:'Hardware de computador',ok:false}]},
+    {emoji:'💬',pergunta:'O que é um Chatbot?',ops:[{t:'Programa que conversa automaticamente',ok:true},{t:'Um robô físico',ok:false},{t:'Um aplicativo de fotos',ok:false},{t:'Um tipo de internet',ok:false}]},
+    {emoji:'🎯',pergunta:'Trabalhos que CRESCEM com a IA:',ops:[{t:'Análise de dados e criação de IA',ok:true},{t:'Entrada manual de dados repetitivos',ok:false},{t:'Atendimento simples de chamadas',ok:false},{t:'Digitação de documentos',ok:false}]},
+    {emoji:'📉',pergunta:'Trabalhos que DIMINUEM com a IA:',ops:[{t:'Tarefas repetitivas e automatizáveis',ok:true},{t:'Cuidado humano e empatia',ok:false},{t:'Criatividade e inovação',ok:false},{t:'Programação e análise',ok:false}]},
+  ];
+  let idx=0,vidas=3,streak=0,pontos=0,resp=false;
+  function render(){
+    if(vidas<=0||idx>=rodadas.length){resultadoFinal(pontos,rodadas.length*10,c);return;}
+    const r=rodadas[idx]; resp=false;
+    const ops=embaralhar(r.ops);
+    c.innerHTML=`
+      <div class="jogo-header-titulo">🦜 Duolingo Avançado</div>
+      <div class="duo-vidas">${[1,2,3].map(i=>`<span class="vida ${i>vidas?'perdida':''}">❤️</span>`).join('')}</div>
+      <div class="duo-streak">🔥 Sequência: ${streak}</div>
+      <div class="duo-card">
+        <span class="duo-emoji">${r.emoji}</span>
+        <div class="duo-frase">${r.pergunta}</div>
+      </div>
+      <div class="duo-ops">
+        ${ops.map((o,i)=>`<button class="duo-op" onclick="duo4Resp(this,${o.ok})">${['🅰️','🅱️','🅲️','🅳️'][i]} ${o.t}</button>`).join('')}
+      </div>
+      <div class="feedback" id="d4fb"></div>
+      <p style="margin-top:10px;font-size:0.85rem;color:#888;">Pergunta ${idx+1} de ${rodadas.length}</p>`;
+  }
+  window.duo4Resp=function(btn,ok){
+    if(resp)return;resp=true;
+    document.querySelectorAll('.duo-op').forEach(b=>b.disabled=true);
+    const fb=document.getElementById('d4fb');
+    if(ok){btn.classList.add('certa');streak++;pontos+=(streak>3?15:10);addPontos(10);fb.className='feedback certo';fb.textContent='🎉 Correto!'+(streak>2?' 🔥 Bônus!':'');setTimeout(()=>{idx++;render();},1400);}
+    else{btn.classList.add('errada');vidas--;streak=0;fb.className='feedback errado';fb.textContent='❌ Errou! -1 vida';setTimeout(()=>{idx++;render();},1600);}
+  };
+  render();
+};
+
+/* ─────────────────────────────────────────
+   NÍVEL 4 — ATIVOS X PASSIVOS
+───────────────────────────────────────── */
+JOGOS.ligar4 = function(c) {
+  const itens=[
+    {item:'🏠 Casa alugada para inquilino',tipo:'ATIVO',exp:'Coloca dinheiro no bolso todo mês.'},
+    {item:'💳 Dívida no cartão de crédito',tipo:'PASSIVO',exp:'Tira dinheiro com juros altíssimos.'},
+    {item:'📈 Aplicação que rende juros',tipo:'ATIVO',exp:'Gera renda passiva mensalmente.'},
+    {item:'🚗 Carro financiado',tipo:'PASSIVO',exp:'Parcelas mensais saem do bolso.'},
+    {item:'🌱 Horta que vende produtos',tipo:'ATIVO',exp:'Gera renda com o negócio próprio.'},
+    {item:'💸 Empréstimo pessoal com juros',tipo:'PASSIVO',exp:'Juros fazem a dívida crescer.'},
+    {item:'📦 Estoque para revenda',tipo:'ATIVO',exp:'Gera lucro quando vendido.'},
+    {item:'📱 Celular parcelado no cartão',tipo:'PASSIVO',exp:'Parcelas mensais saem do orçamento.'},
+  ];
+  let acertos=0;
+
+  c.innerHTML=`
+    <div class="jogo-header-titulo">📊 Ativos x Passivos</div>
+    <p class="jogo-instrucao">Classifique cada item: é um ATIVO (coloca dinheiro) ou PASSIVO (tira dinheiro)?</p>
+    <div class="placar-jogo">⭐ Acertos: <span id="ap4">0</span> de ${itens.length}</div>
+    ${itens.map((it,i)=>`
+      <div style="background:var(--cinza);border-radius:12px;padding:14px;margin-bottom:10px;border-left:4px solid #ddd;" id="ap4i${i}">
+        <p style="font-size:0.95rem;font-weight:700;margin-bottom:10px;">${it.item}</p>
+        <div style="display:flex;gap:10px;">
+          <button style="background:var(--cor1);color:white;border:none;border-radius:50px;padding:8px 18px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;" id="ap4a${i}" onclick="ap4Resp(${i},'ATIVO')">✅ ATIVO</button>
+          <button style="background:var(--cor5);color:white;border:none;border-radius:50px;padding:8px 18px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;" id="ap4p${i}" onclick="ap4Resp(${i},'PASSIVO')">❌ PASSIVO</button>
+        </div>
+        <div style="display:none;margin-top:8px;font-weight:700;font-size:0.88rem;" id="ap4r${i}"></div>
+      </div>`).join('')}`;
+
+  window.ap4Resp=function(i,resp){
+    const it=itens[i];
+    document.getElementById('ap4a'+i).disabled=true;
+    document.getElementById('ap4p'+i).disabled=true;
+    const box=document.getElementById('ap4i'+i);
+    const res=document.getElementById('ap4r'+i);
+    res.style.display='block';
+    if(resp===it.tipo){acertos++;box.style.borderLeftColor='var(--cor1)';box.style.background='#d4edda';res.style.color='var(--cor1d)';res.textContent='🎉 Correto! '+it.exp;document.getElementById('ap4').textContent=acertos;addPontos(10);}
+    else{box.style.borderLeftColor='var(--cor5)';box.style.background='#f8d7da';res.style.color='var(--cor5d)';res.textContent='❌ É '+it.tipo+'. '+it.exp;}
+  };
+};
+
+/* ─────────────────────────────────────────
+   NÍVEL 4 — VOF IA
+───────────────────────────────────────── */
+JOGOS.vof4 = function(c) {
+  const itens=[
+    {frase:'A IA vai acabar com todos os empregos do mundo.',correto:'F',exp:'Falso! A IA elimina alguns trabalhos repetitivos, mas cria novas profissões.'},
+    {frase:'Novas tecnologias sempre criam novos tipos de empregos.',correto:'V',exp:'Verdadeiro! Na história, cada nova tecnologia gerou novas oportunidades.'},
+    {frase:'O Programador de IA cria, treina e aprimora sistemas de IA.',correto:'V',exp:'Verdadeiro! É uma das profissões mais bem pagas e necessárias hoje.'},
+    {frase:'Chatbots já substituem completamente o atendimento humano.',correto:'F',exp:'Falso! Situações complexas e com empatia ainda precisam de humanos.'},
+    {frase:'Para ser Técnico em Robótica é preciso saber eletrônica e programação.',correto:'V',exp:'Verdadeiro! A profissão une eletrônica, mecânica e programação.'},
+    {frase:'A IA aprende com dados e exemplos fornecidos pelos humanos.',correto:'V',exp:'Verdadeiro! Os dados são a matéria-prima do aprendizado da IA.'},
+    {frase:'O assistente de voz Alexa não usa Inteligência Artificial.',correto:'F',exp:'Falso! Assistentes de voz são exemplos clássicos de IA no dia a dia.'},
+  ];
+  let acertos=0;
+  c.innerHTML=`
+    <div class="jogo-header-titulo">🤖 V ou F — Inteligência Artificial</div>
+    <p class="jogo-instrucao">Verdadeiro ou Falso sobre a IA no mundo do trabalho?</p>
+    <div class="placar-jogo">⭐ Acertos: <span id="vof4p">0</span> de ${itens.length}</div>
+    ${itens.map((it,i)=>`
+      <div class="vof-item" id="vof4i${i}">
+        <div class="vof-frase">🤖 ${it.frase}</div>
+        <div class="vof-btns">
+          <button class="vof-v" id="vof4v${i}" onclick="vof4Resp(${i},'V')">✅ Verdadeiro</button>
+          <button class="vof-f" id="vof4f${i}" onclick="vof4Resp(${i},'F')">❌ Falso</button>
+        </div>
+        <div class="vof-resultado" id="vof4r${i}"></div>
+      </div>`).join('')}`;
+  window.vof4Resp=function(i,r){
+    const it=itens[i];
+    document.getElementById('vof4v'+i).disabled=true;
+    document.getElementById('vof4f'+i).disabled=true;
+    const res=document.getElementById('vof4r'+i);
+    const box=document.getElementById('vof4i'+i);
+    res.style.display='block';
+    if(r===it.correto){acertos++;box.classList.add('certa');res.style.color='var(--cor1d)';res.textContent='🎉 '+it.exp;document.getElementById('vof4p').textContent=acertos;addPontos(10);}
+    else{box.classList.add('errada');res.style.color='var(--cor5d)';res.textContent='❌ '+it.exp;}
+  };
+};
+
+/* ─────────────────────────────────────────
+   NÍVEL 4 — ARGUMENTE!
+───────────────────────────────────────── */
+JOGOS.frase4 = function(c) {
+  const frases=[
+    {palavras:['A','IA','CRIA','NOVOS','EMPREGOS','E','ELIMINA','OUTROS'],frase:'A IA CRIA NOVOS EMPREGOS E ELIMINA OUTROS'},
+    {palavras:['GUARDAR','20%','DO','SALÁRIO','GARANTE','LIBERDADE','FINANCEIRA'],frase:'GUARDAR 20% DO SALÁRIO GARANTE LIBERDADE FINANCEIRA'},
+    {palavras:['JUROS','COMPOSTOS','PODEM','TRABALHAR','A','FAVOR','OU','CONTRA','VOCÊ'],frase:'JUROS COMPOSTOS PODEM TRABALHAR A FAVOR OU CONTRA VOCÊ'},
+    {palavras:['NUNCA','É','TARDE','PARA','ESTUDAR','E','SE','REINVENTAR'],frase:'NUNCA É TARDE PARA ESTUDAR E SE REINVENTAR'},
+  ];
+  JOGOS.frase3(c);
+  // Replace data
+  let idx=0,montada=[],pontos=0,resp=false;
+  function render(){
+    if(idx>=frases.length){resultadoFinal(pontos,frases.length*15,c);return;}
+    const fr=frases[idx]; montada=[]; resp=false;
+    const emb=embaralhar([...fr.palavras]);
+    c.innerHTML=`
+      <div class="jogo-header-titulo">🗣️ Argumente!</div>
+      <p class="jogo-instrucao">Monte afirmações sobre trabalho e finanças! Clique para remover da frase.</p>
+      <div class="placar-jogo">⭐ Pontos: <span id="arg4p">${pontos}</span></div>
+      <div class="frase-montada" id="arg4m"></div>
+      <div class="sil-grid" id="arg4g">
+        ${emb.map((p,i)=>`<button class="pw-frase" id="arg4b${i}" onclick="arg4Add(${i},'${p.replace(/'/g,"&apos;")}')">${p}</button>`).join('')}
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;">
+        <button class="btn btn-roxo" onclick="arg4Verif()">✅ Verificar</button>
+        <button class="btn btn-laranja" onclick="arg4Clr()">🔄 Limpar</button>
+        <button class="btn btn-azul" onclick="arg4Prox()">➡️ Próxima</button>
+      </div>
+      <div class="feedback" id="arg4fb"></div>
+      <p style="margin-top:10px;font-size:0.85rem;color:#888;">Frase ${idx+1} de ${frases.length}</p>`;
+    window._arg4=fr;
+  }
+  function arg4Atu(){const d=document.getElementById('arg4m');if(!montada.length){d.textContent='Monte a frase aqui...';d.style.color='#aaa';return;}d.style.color='var(--cor4d)';d.innerHTML=montada.map((it,i)=>`<span class="pw-na-frase" onclick="arg4Rem(${i})">${it.p}</span>`).join('');}
+  window.arg4Add=function(i2,p){if(resp)return;const b=document.getElementById('arg4b'+i2);if(b.classList.contains('usada'))return;b.classList.add('usada');montada.push({idx:i2,p});arg4Atu();};
+  window.arg4Rem=function(pos){if(resp)return;const it=montada[pos];const b=document.getElementById('arg4b'+it.idx);if(b)b.classList.remove('usada');montada.splice(pos,1);arg4Atu();};
+  window.arg4Clr=function(){montada=[];resp=false;document.querySelectorAll('.pw-frase').forEach(b=>b.classList.remove('usada'));arg4Atu();const fb=document.getElementById('arg4fb');fb.className='feedback';fb.textContent='';};
+  window.arg4Verif=function(){const fr=window._arg4;const fb=document.getElementById('arg4fb');const tent=montada.map(it=>it.p).join(' ');if(tent===fr.frase){resp=true;fb.className='feedback certo';fb.textContent='🎉 Perfeito!';pontos+=15;document.getElementById('arg4p').textContent=pontos;addPontos(15);setTimeout(()=>{idx++;render();},1200);}else{fb.className='feedback errado';fb.textContent='❌ Tente rearranjar as palavras!';}};
+  window.arg4Prox=function(){idx++;render();};
+  render();
+};
+
+/* ─────────────────────────────────────────
+   NÍVEL 5 — BANCO IMOBILIÁRIO EDUCATIVO
+───────────────────────────────────────── */
+JOGOS.banco5 = function(c) {
+  const casas=[
+    {nome:'EMPREGO\nFORMAL',valor:200,cor:'azul',emoji:'💼',perg:{p:'Qual é um direito do emprego formal?',ops:['Férias remuneradas','Trabalho sem horário','Sem salário mínimo'],c:0}},
+    {nome:'SALÁRIO\nMÍNIMO',valor:150,cor:'verde',emoji:'💰',perg:{p:'O salário mínimo pode ser abaixo do estabelecido?',ops:['Sim, sempre','Não, é proibido por lei','Depende do empregador'],c:1}},
+    {nome:'POUPANÇA',valor:180,cor:'amarelo',emoji:'🏦',perg:{p:'Para que serve a reserva de emergência?',ops:['Para gastos supérfluos','Para imprevistos (3-6 meses)','Para investir na bolsa'],c:1}},
+    {nome:'TECNOLOGIA',valor:220,cor:'roxo',emoji:'💻',perg:{p:'O que a IA faz com trabalhos repetitivos?',ops:['Aumenta a quantidade','Pode substituir','Não afeta'],c:1}},
+    {nome:'FGTS',valor:160,cor:'verde',emoji:'📋',perg:{p:'Quem deposita o FGTS?',ops:['O trabalhador','O governo','O empregador'],c:2}},
+    {nome:'JUROS\nCOMPOSTOS',valor:250,cor:'vermelho',emoji:'📈',perg:{p:'Juros compostos podem trabalhar a favor e contra você?',ops:['Só contra','Só a favor','A favor e contra'],c:2}},
+    {nome:'CHATBOT',valor:190,cor:'azul',emoji:'🤖',perg:{p:'O que chatbots fazem melhor que humanos?',ops:['Empatia em casos difíceis','Respostas simples 24h','Decisões criativas'],c:1}},
+    {nome:'MEI',valor:210,cor:'laranja',emoji:'🏪',perg:{p:'O que é ser MEI?',ops:['Trabalhador informal','Microempreendedor Individual formalizado','Empregado público'],c:1}},
+    {nome:'INVESTIMENTO',valor:280,cor:'verde',emoji:'💎',perg:{p:'Qual investimento tem menor risco para iniciantes?',ops:['Ações','Criptomoedas','Tesouro Selic'],c:2}},
+    {nome:'PROGRAMADOR\nIA',valor:300,cor:'roxo',emoji:'🦾',perg:{p:'O que o Programador de IA faz?',ops:['Conserta computadores','Cria e treina sistemas de IA','Vende software'],c:1}},
+  ];
+
+  let jogador={nome:'Você',dinheiro:1500,pos:0},computador={nome:'Computador',dinheiro:1500,pos:0};
+  let compradas={},vez='jogador',rolarAtivo=true;
+
+  function render(){
+    c.innerHTML=`
+      <div class="jogo-header-titulo">🏦 Banco Imobiliário</div>
+      <p class="jogo-instrucao">Role o dado, responda perguntas corretamente para comprar propriedades!</p>
+      <div class="banco-info">
+        <div class="banco-stat"><div class="banco-stat-val" style="color:var(--cor1);">R$ ${jogador.dinheiro}</div><div class="banco-stat-label">👤 Seu dinheiro</div></div>
+        <div class="banco-stat"><div class="banco-stat-val" style="color:var(--cor5);">R$ ${computador.dinheiro}</div><div class="banco-stat-label">🤖 Computador</div></div>
+      </div>
+      <div class="banco-board" id="bboard">
+        ${casas.map((ca,i)=>{
+          const donoCmp=compradas[i];
+          let cls='';
+          if(donoCmp==='jogador'&&i===jogador.pos)cls='minha';
+          else if(donoCmp==='jogador')cls='comprada';
+          else if(donoCmp==='computador')cls='comprada-outro';
+          const mj=i===jogador.pos?'👤':'',mc=i===computador.pos?'🤖':'';
+          return `<div class="banco-casa ${cls}" title="R$${ca.valor}">
+            <span>${ca.emoji}</span>
+            <span style="font-size:0.7rem;font-weight:800;">${ca.nome}</span>
+            <span style="font-size:0.65rem;">R$${ca.valor}</span>
+            ${mj?`<span class="banco-jogador">${mj}</span>`:''}
+            ${mc?`<span class="banco-jogador" style="right:auto;left:3px;">${mc}</span>`:''}
+          </div>`;
+        }).join('')}
+      </div>
+      <div style="text-align:center;margin-bottom:14px;">
+        <p style="font-weight:700;margin-bottom:8px;color:#555;">Vez: <strong>${vez==='jogador'?'👤 Você':'🤖 Computador'}</strong></p>
+        <span class="banco-dice" id="dice" onclick="rolarDado()">🎲</span>
+        <p style="font-size:0.85rem;color:#888;margin-top:4px;">${rolarAtivo?'Clique no dado para rolar!':'Aguarde...'}</p>
+      </div>
+      <div id="banco-pergunta-area"></div>
+      <div class="feedback" id="bancofb"></div>`;
+  }
+
+  window.rolarDado=function(){
+    if(!rolarAtivo)return;
+    rolarAtivo=false;
+    const dice=document.getElementById('dice');
+    dice.classList.add('rolando');
+    setTimeout(()=>{
+      dice.classList.remove('rolando');
+      const val=Math.floor(Math.random()*6)+1;
+      const faces=['⚀','⚁','⚂','⚃','⚄','⚅'];
+      dice.textContent=faces[val-1];
+      const alvo=vez==='jogador'?jogador:computador;
+      alvo.pos=(alvo.pos+val)%casas.length;
+      const casa=casas[alvo.pos];
+      const fb=document.getElementById('bancofb');
+      fb.className='feedback info';fb.textContent=`🎲 Tirou ${val}! Parou em: ${casa.nome.replace('\n',' ')} (R$${casa.valor})`;
+
+      if(compradas[alvo.pos]&&compradas[alvo.pos]!==vez){
+        // Pagar aluguel
+        const dono=compradas[alvo.pos];
+        const aluguel=Math.floor(casa.valor*0.3);
+        if(vez==='jogador'){jogador.dinheiro-=aluguel;computador.dinheiro+=aluguel;fb.textContent+=` | 💸 Pagou aluguel R$${aluguel}!`;}
+        else{computador.dinheiro-=aluguel;jogador.dinheiro+=aluguel;fb.textContent+=` | 💰 Recebeu aluguel R$${aluguel}!`;}
+        vez=vez==='jogador'?'computador':'jogador';
+        setTimeout(()=>{
+          rolarAtivo=true;
+          if(vez==='computador'){setTimeout(()=>rolarDado(),1200);}
+          render();
+        },1500);
+      } else if(!compradas[alvo.pos]&&alvo.dinheiro>=casa.valor){
+        // Mostrar pergunta
+        if(vez==='jogador'){
+          mostrarPerguntaBanco(casa,alvo.pos);
+        } else {
+          // Computador responde aleatório (70% acerto)
+          const acertou=Math.random()>0.3;
+          if(acertou){compradas[alvo.pos]='computador';computador.dinheiro-=casa.valor;fb.textContent+=` | 🤖 Computador comprou!`;}
+          vez='jogador'; rolarAtivo=true;
+          setTimeout(()=>render(),1200);
+        }
+      } else {
+        vez=vez==='jogador'?'computador':'jogador';
+        rolarAtivo=true;
+        if(vez==='computador'){setTimeout(()=>rolarDado(),1000);}
+        setTimeout(()=>render(),800);
+      }
+
+      // Verificar fim
+      if(jogador.dinheiro<=0||computador.dinheiro<=0){
+        setTimeout(()=>{
+          const v=jogador.dinheiro>computador.dinheiro?'Você venceu! 🏆':'Computador venceu! 🤖';
+          c.innerHTML=`<div class="resultado-box"><div class="result-emoji">${jogador.dinheiro>0?'🏆':'😢'}</div><div class="result-titulo">${v}</div><p class="result-pontos">Seu saldo final: R$ ${jogador.dinheiro}</p><button class="btn btn-verde" onclick="abrirJogo('banco5')">🔄 Jogar novamente</button></div>`;
+        },500);
+      }
+    },600);
+  };
+
+  function mostrarPerguntaBanco(casa,posIdx){
+    const pa=document.getElementById('banco-pergunta-area');
+    pa.innerHTML=`
+      <div class="banco-pergunta">
+        <p style="font-weight:800;color:var(--cor3);margin-bottom:10px;">❓ Responda para comprar ${casa.nome.replace('\n',' ')} por R$${casa.valor}:</p>
+        <p style="font-weight:700;margin-bottom:12px;">${casa.perg.p}</p>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          ${casa.perg.ops.map((o,i)=>`<button class="quiz-op" onclick="respBanco(${i},${casa.perg.c},${posIdx},${casa.valor})">${String.fromCharCode(65+i)}) ${o}</button>`).join('')}
+        </div>
+      </div>`;
+    window._bancoCasa={posIdx,valor:casa.valor};
+  }
+
+  window.respBanco=function(esc,corr,posIdx,valor){
+    document.querySelectorAll('.quiz-op').forEach(b=>b.disabled=true);
+    const fb=document.getElementById('bancofb');
+    if(esc===corr){compradas[posIdx]='jogador';jogador.dinheiro-=valor;addPontos(15);fb.className='feedback certo';fb.textContent='🎉 Correto! Propriedade comprada!';}
+    else{document.querySelectorAll('.quiz-op')[corr].classList.add('certa');fb.className='feedback errado';fb.textContent='❌ Errou! Não comprou.';}
+    vez='computador';
+    setTimeout(()=>{render();setTimeout(()=>rolarDado(),800);},1400);
+  };
+
+  render();
+};
+
+/* ─────────────────────────────────────────
+   NÍVEL 5 — QUIZ FINAL
+───────────────────────────────────────── */
+JOGOS.quiz5 = function(c) {
+  const pergs=[
+    {p:'Qual a principal diferença entre trabalho formal e informal?',ops:['Salário diferente','Carteira assinada e direitos garantidos','Horário de trabalho','Local de trabalho'],c:1},
+    {p:'O que é a regra 50-30-20 da educação financeira?',ops:['50% poupança, 30% necessidades, 20% desejos','50% necessidades, 30% desejos, 20% poupança','50% desejos, 30% poupança, 20% necessidades','Dividir o salário em 3 partes iguais'],c:1},
+    {p:'O que aconteceu com o Datilógrafo com a chegada dos computadores?',ops:['A profissão cresceu muito','A profissão foi desaparecendo','A profissão mudou de nome','Nada mudou'],c:1},
+    {p:'Na "Bola de Neve" das dívidas, qual a ordem de pagamento?',ops:['Da maior para a menor dívida','Aleatoriamente','Da menor para a maior dívida','Pagar todas ao mesmo tempo'],c:2},
+    {p:'O Programador de IA usa qual linguagem mais comum?',ops:['Java','HTML','Python','SQL'],c:2},
+    {p:'Uma casa alugada para inquilino é um exemplo de:',ops:['Passivo','Gasto necessário','Ativo','Dívida'],c:2},
+    {p:'O que é a "Uberização" do trabalho?',ops:['Trabalho em táxi','Modelo de trabalho informal por aplicativo','Tipo de carteira assinada','Benefício do governo'],c:1},
+    {p:'Quais juros médios tem o cartão de crédito rotativo no Brasil?',ops:['Cerca de 10% ao ano','Cerca de 50% ao ano','Cerca de 400% ao ano','Cerca de 15% ao mês'],c:2},
+    {p:'O que faz o Técnico em Robótica?',ops:['Escreve sobre robôs','Monta, programa e conserta robôs','Vende eletrônicos','Ensina matemática'],c:1},
+    {p:'A maior motivação para as pessoas trabalharem é:',ops:['Passar o tempo','Garantir sustento e sobrevivência','Fazer amigos','Aprender novas habilidades'],c:1},
+    {p:'O que é liberdade financeira segundo a apostila?',ops:['Ter muito dinheiro','Não ter dívidas','Quando investimentos pagam suas contas','Ganhar muito salário'],c:2},
+    {p:'Qual é o primeiro passo para sair de dívidas (método Bola de Neve)?',ops:['Ignorar dívidas pequenas','Listar todas as dívidas, da menor para a maior','Fazer um novo empréstimo','Negociar só as maiores'],c:1},
+  ];
+  let idx=0,acertos=0,resp=false;
+
+  function render(){
+    document.getElementById('jogo-conteudo').innerHTML='';
+    if(idx>=pergs.length){resultadoFinal(acertos,pergs.length,document.getElementById('jogo-conteudo'));return;}
+    const p=pergs[idx]; resp=false;
+    const pct=Math.round(idx/pergs.length*100);
+    document.getElementById('jogo-conteudo').innerHTML=`
+      <div class="jogo-header-titulo">🏆 Quiz Final</div>
+      <p class="jogo-instrucao">O desafio final! Perguntas das duas apostilas.</p>
+      <div class="placar-jogo">⭐ Acertos: ${acertos}/${pergs.length}</div>
+      <div class="barra-prog"><div class="barra-fill" style="width:${pct}%"></div></div>
+      <div class="quiz-pergunta">🏆 ${p.p}</div>
+      <div class="quiz-ops">
+        ${p.ops.map((o,i)=>`<button class="quiz-op" onclick="q5Resp(this,${i},${p.c})">${String.fromCharCode(65+i)}) ${o}</button>`).join('')}
+      </div>
+      <div class="feedback" id="q5fb"></div>
+      <div class="quiz-nav">
+        <span class="quiz-prog">Pergunta ${idx+1} de ${pergs.length}</span>
+        <button class="btn btn-vermelho" onclick="q5Prox()">➡️ Próxima</button>
+      </div>`;
+  }
+  window.q5Resp=function(btn,esc,corr){
+    if(resp)return;resp=true;
+    document.querySelectorAll('.quiz-op').forEach(b=>b.disabled=true);
+    const fb=document.getElementById('q5fb');
+    if(esc===corr){btn.classList.add('certa');acertos++;addPontos(10);fb.className='feedback certo';fb.textContent='🎉 Correto! Excelente!';}
+    else{btn.classList.add('errada');document.querySelectorAll('.quiz-op')[corr].classList.add('certa');fb.className='feedback errado';fb.textContent='❌ Resposta correta em verde.';}
+  };
+  window.q5Prox=function(){idx++;render();};
+  render();
+};
+
+/* ─────────────────────────────────────────
+   NÍVEL 5 — DUO EXPERT
+───────────────────────────────────────── */
+JOGOS.duo5 = function(c) {
+  const rodadas=[
+    {emoji:'🌍',pergunta:'Qual país tem modelo de trabalho "996" (9h às 21h, 6 dias)?',ops:[{t:'China',ok:true},{t:'Japão',ok:false},{t:'Brasil',ok:false},{t:'EUA',ok:false}]},
+    {emoji:'🇧🇷',pergunta:'A CLT (Consolidação das Leis do Trabalho) protege qual trabalhador?',ops:[{t:'Com carteira assinada',ok:true},{t:'Só autônomos',ok:false},{t:'Só servidores públicos',ok:false},{t:'Todos sem exceção',ok:false}]},
+    {emoji:'💡',pergunta:'O que é uma meta SMART?',ops:[{t:'Específica, mensurável, alcançável, relevante e com prazo',ok:true},{t:'Simples, motivadora e ambiciosa',ok:false},{t:'Rápida e temporária',ok:false},{t:'Social, mental e artística',ok:false}]},
+    {emoji:'🎯',pergunta:'Quanto tempo leva para uma dívida de R$1.000 no cartão (15%/mês) virar R$5.350?',ops:[{t:'1 ano',ok:true},{t:'2 anos',ok:false},{t:'6 meses',ok:false},{t:'5 anos',ok:false}]},
+    {emoji:'📊',pergunta:'O que é diversificação em investimentos?',ops:[{t:'Colocar tudo em um único investimento',ok:false},{t:'Distribuir recursos em diferentes tipos de investimento',ok:true},{t:'Guardar dinheiro só na poupança',ok:false},{t:'Investir apenas em ações',ok:false}]},
+    {emoji:'🤝',pergunta:'O que diferencia o Criador de Conteúdo Digital?',ops:[{t:'Criatividade, autenticidade e conhecimento do tema',ok:true},{t:'Ter equipamento caro',ok:false},{t:'Trabalhar para uma empresa grande',ok:false},{t:'Ter formação universitária',ok:false}]},
+  ];
+  let idx=0,vidas=3,streak=0,pontos=0,resp=false;
+  function render(){
+    if(vidas<=0||idx>=rodadas.length){resultadoFinal(pontos,rodadas.length*15,c);return;}
+    const r=rodadas[idx]; resp=false;
+    const ops=embaralhar(r.ops);
+    c.innerHTML=`
+      <div class="jogo-header-titulo">🦜 Duolingo Expert</div>
+      <div class="duo-vidas">${[1,2,3].map(i=>`<span class="vida ${i>vidas?'perdida':''}">❤️</span>`).join('')}</div>
+      <div class="duo-streak">🔥 Sequência: ${streak} | ⭐ ${pontos} pts</div>
+      <div class="duo-card">
+        <span class="duo-emoji">${r.emoji}</span>
+        <div class="duo-frase">${r.pergunta}</div>
+        <div class="duo-sub">Nível Expert — 15 pontos por acerto!</div>
+      </div>
+      <div class="duo-ops">
+        ${ops.map((o,i)=>`<button class="duo-op" onclick="duo5Resp(this,${o.ok})">${['🅰️','🅱️','🅲️','🅳️'][i]} ${o.t}</button>`).join('')}
+      </div>
+      <div class="feedback" id="d5fb"></div>
+      <p style="margin-top:10px;font-size:0.85rem;color:#888;">Pergunta ${idx+1} de ${rodadas.length}</p>`;
+  }
+  window.duo5Resp=function(btn,ok){
+    if(resp)return;resp=true;
+    document.querySelectorAll('.duo-op').forEach(b=>b.disabled=true);
+    const fb=document.getElementById('d5fb');
+    if(ok){btn.classList.add('certa');streak++;pontos+=(streak>3?20:15);addPontos(15);fb.className='feedback certo';fb.textContent='🎉 Correto! +'+(streak>3?20:15)+(streak>3?' 🔥':'');setTimeout(()=>{idx++;render();},1400);}
+    else{btn.classList.add('errada');vidas--;streak=0;fb.className='feedback errado';fb.textContent='❌ Errou! -1 vida ❤️';setTimeout(()=>{idx++;render();},1600);}
+  };
+  render();
+};
+
+/* ─────────────────────────────────────────
+   NÍVEL 5 — DEBATE DE IDEIAS
+───────────────────────────────────────── */
+JOGOS.debate5 = function(c) {
+  const itens=[
+    {tema:'A IA e o Futuro do Trabalho',frase:'A IA vai _____ o trabalho, mas também _____ novos empregos.',palavras:[['eliminar','mudar','acabar com'],['cria','destrói','impede']],correto:['mudar','cria'],exp:'A IA muda o trabalho e cria novos empregos, como Programador de IA e Técnico em Robótica.'},
+    {tema:'Educação Financeira',frase:'Quem entende juros compostos _____, quem não entende _____.',palavras:[['ganha','perde','sofre'],['paga','ganha','economiza']],correto:['ganha','paga'],exp:'Frase de Albert Einstein: "Os juros compostos são a oitava maravilha do mundo."'},
+    {tema:'Direitos Trabalhistas',frase:'O trabalhador com carteira assinada tem _____ como _____ e FGTS.',palavras:[['obrigações','direitos','deveres'],['férias','viagens','trabalho']],correto:['direitos','férias'],exp:'A CLT garante direitos como férias, FGTS, salário mínimo e seguro desemprego.'},
+    {tema:'Uberização',frase:'O trabalho de aplicativo oferece _____ nos horários, mas não tem _____ trabalhistas.',palavras:[['rigidez','flexibilidade','obrigação'],['direitos','salário','emprego']],correto:['flexibilidade','direitos'],exp:'Motoristas de app escolhem horários, mas não têm férias, FGTS ou 13º salário garantidos.'},
+  ];
+  let idx=0,acertos=0;
+  function render(){
+    if(idx>=itens.length){resultadoFinal(acertos,itens.length*10,c);return;}
+    const it=itens[idx];
+    c.innerHTML=`
+      <div class="jogo-header-titulo">💡 Debate de Ideias</div>
+      <p class="jogo-instrucao">Complete as afirmações escolhendo as palavras corretas!</p>
+      <div class="placar-jogo">⭐ Acertos: <span id="deb5p">${acertos}</span> de ${itens.length}</div>
+      <div style="background:linear-gradient(135deg,#e8f5fe,#f0e8fe);border-radius:14px;padding:16px;margin-bottom:16px;">
+        <p style="font-weight:900;color:var(--cor4);margin-bottom:6px;">📌 Tema: ${it.tema}</p>
+        <p style="font-size:1.05rem;font-weight:700;line-height:2;">${it.frase.replace(/___/g,(m,i)=>`<strong id="deb5w${[...it.frase.matchAll(/___/g)].indexOf(m) < 2 ? [...it.frase.matchAll(/___/g)].indexOf(m) : i}" style="color:var(--cor2);background:#e8f0fe;padding:2px 8px;border-radius:6px;">___</strong>`)}</p>
+      </div>
+      ${it.palavras.map((pw,wi)=>`
+        <div style="margin-bottom:14px;">
+          <p style="font-weight:700;color:#555;margin-bottom:8px;">Lacuna ${wi+1}: escolha uma palavra:</p>
+          <div style="display:flex;flex-wrap:wrap;gap:8px;">
+            ${pw.map(w=>`<button class="opcao-btn" id="deb5b${wi}${w.replace(/ /g,'_')}" onclick="deb5Sel(${wi},'${w}','${it.correto[wi]}')">${w}</button>`).join('')}
+          </div>
+        </div>`).join('')}
+      <div class="feedback" id="deb5fb"></div>
+      <button class="btn btn-azul" style="margin-top:10px;" onclick="deb5Prox()">➡️ Próximo tema</button>
+      <p style="margin-top:10px;font-size:0.85rem;color:#888;">Tema ${idx+1} de ${itens.length}</p>`;
+    window._deb5it=it; window._deb5resps={};
+  }
+  window.deb5Sel=function(wi,w,corr){
+    document.querySelectorAll(`[id^="deb5b${wi}"]`).forEach(b=>b.disabled=true);
+    const fb=document.getElementById('deb5fb');
+    window._deb5resps[wi]=w;
+    if(w===corr){document.getElementById(`deb5b${wi}${w.replace(/ /g,'_')}`).classList.add('certa');fb.className='feedback certo';fb.textContent='✅ Lacuna '+( wi+1)+' correta!';addPontos(5);}
+    else{document.getElementById(`deb5b${wi}${w.replace(/ /g,'_')}`).classList.add('errada');document.getElementById(`deb5b${wi}${corr.replace(/ /g,'_')}`).classList.add('certa');fb.className='feedback errado';fb.textContent='❌ A palavra correta era: '+corr;}
+    const all=Object.keys(window._deb5resps).length===window._deb5it.palavras.length;
+    if(all){const ok=window._deb5it.correto.every((cv,i)=>window._deb5resps[i]===cv);if(ok){acertos++;document.getElementById('deb5p').textContent=acertos;fb.className='feedback certo';fb.textContent='🎉 Perfeito! '+window._deb5it.exp;}else{fb.className='feedback info';fb.textContent='💡 '+window._deb5it.exp;}}
+  };
+  window.deb5Prox=function(){idx++;render();};
+  render();
+};
+
+/* ─────────────────────────────────────────
+   NÍVEL 5 — MEU PLANO FINANCEIRO
+───────────────────────────────────────── */
+JOGOS.plano5 = function(c) {
+  c.innerHTML=`
+    <div class="jogo-header-titulo">📋 Meu Plano Financeiro</div>
+    <p class="jogo-instrucao">Monte seu plano financeiro pessoal baseado na apostila! Preencha todos os campos.</p>
+    <div style="display:grid;gap:14px;">
+      <div style="background:var(--cinza);border-radius:14px;padding:18px;">
+        <h3 style="font-family:'Fredoka One',cursive;color:var(--cor3);margin-bottom:14px;">💰 Sua Renda</h3>
+        <div style="display:grid;gap:10px;">
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+            <label style="font-weight:700;min-width:180px;">Renda mensal (R$):</label>
+            <input id="pl-renda" type="number" value="1700" style="border:2px solid #ddd;border-radius:8px;padding:8px;font-size:1rem;font-weight:700;width:130px;font-family:'Nunito',sans-serif;outline:none;">
+          </div>
+        </div>
+      </div>
+      <div style="background:var(--cinza);border-radius:14px;padding:18px;">
+        <h3 style="font-family:'Fredoka One',cursive;color:var(--cor2);margin-bottom:14px;">🏠 Gastos Essenciais (50%)</h3>
+        <div style="display:grid;gap:8px;">
+          ${['Aluguel/Moradia','Alimentação','Transporte','Saúde','Contas (luz, água, internet)'].map((g,i)=>`
+            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+              <label style="font-weight:600;min-width:180px;font-size:0.9rem;">${g}:</label>
+              <input id="pl-g${i}" type="number" value="0" style="border:2px solid #ddd;border-radius:8px;padding:8px;font-size:0.95rem;font-weight:700;width:110px;font-family:'Nunito',sans-serif;outline:none;">
+            </div>`).join('')}
+        </div>
+      </div>
+      <div style="background:var(--cinza);border-radius:14px;padding:18px;">
+        <h3 style="font-family:'Fredoka One',cursive;color:var(--cor4);margin-bottom:14px;">🎯 Meus Objetivos (Meta SMART)</h3>
+        <div style="display:grid;gap:8px;">
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+            <label style="font-weight:700;min-width:180px;">Meu objetivo:</label>
+            <input id="pl-obj" type="text" placeholder="Ex: Reserva de emergência" style="border:2px solid #ddd;border-radius:8px;padding:8px;font-size:0.95rem;font-weight:600;flex:1;min-width:180px;font-family:'Nunito',sans-serif;outline:none;">
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+            <label style="font-weight:700;min-width:180px;">Valor necessário (R$):</label>
+            <input id="pl-objval" type="number" value="5000" style="border:2px solid #ddd;border-radius:8px;padding:8px;font-size:0.95rem;font-weight:700;width:130px;font-family:'Nunito',sans-serif;outline:none;">
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+            <label style="font-weight:700;min-width:180px;">Prazo (meses):</label>
+            <input id="pl-prazo" type="number" value="12" style="border:2px solid #ddd;border-radius:8px;padding:8px;font-size:0.95rem;font-weight:700;width:100px;font-family:'Nunito',sans-serif;outline:none;">
+          </div>
+        </div>
+      </div>
+      <button class="btn btn-laranja" onclick="gerarPlano()" style="font-size:1rem;">📊 Gerar Meu Plano</button>
+    </div>
+    <div id="plano-resultado" style="margin-top:16px;"></div>`;
+
+  window.gerarPlano=function(){
+    const renda=parseFloat(document.getElementById('pl-renda').value)||0;
+    const gs=[0,1,2,3,4].map(i=>parseFloat(document.getElementById('pl-g'+i).value)||0);
+    const totalGs=gs.reduce((a,b)=>a+b,0);
+    const obj=document.getElementById('pl-obj').value||'Reserva de emergência';
+    const objVal=parseFloat(document.getElementById('pl-objval').value)||5000;
+    const prazo=parseFloat(document.getElementById('pl-prazo').value)||12;
+    const nec=renda*0.5,des=renda*0.3,pou=renda*0.2;
+    const poupMensal=Math.max(0,renda-totalGs);
+    const mesesPraObj=objVal>0&&poupMensal>0?Math.ceil(objVal/poupMensal):Infinity;
+    const div=document.getElementById('plano-resultado');
+    div.innerHTML=`
+      <div style="background:linear-gradient(135deg,#e8f5fe,#f0e8fe);border-radius:16px;padding:20px;border:3px solid var(--cor4);">
+        <h3 style="font-family:'Fredoka One',cursive;color:var(--cor4);margin-bottom:14px;font-size:1.3rem;">📋 Seu Plano Financeiro Pessoal</h3>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:16px;">
+          <div class="banco-stat" style="background:white;"><div class="banco-stat-val">R$${nec.toFixed(0)}</div><div class="banco-stat-label">50% Necessidades</div></div>
+          <div class="banco-stat" style="background:white;"><div class="banco-stat-val" style="color:var(--cor2);">R$${des.toFixed(0)}</div><div class="banco-stat-label">30% Desejos</div></div>
+          <div class="banco-stat" style="background:white;"><div class="banco-stat-val" style="color:var(--cor1);">R$${pou.toFixed(0)}</div><div class="banco-stat-label">20% Poupança ideal</div></div>
+          <div class="banco-stat" style="background:white;"><div class="banco-stat-val" style="color:${totalGs<=nec?'var(--cor1)':'var(--cor5)'};">R$${totalGs.toFixed(0)}</div><div class="banco-stat-label">Seus gastos essenciais</div></div>
+        </div>
+        <div style="background:white;border-radius:12px;padding:14px;margin-bottom:12px;">
+          <p style="font-weight:800;color:var(--cor3);margin-bottom:8px;">🎯 Meta: ${obj}</p>
+          <p style="font-weight:700;">Valor necessário: <strong>R$${objVal.toFixed(2)}</strong></p>
+          <p style="font-weight:700;">Poupança disponível/mês: <strong style="color:var(--cor1);">R$${poupMensal.toFixed(2)}</strong></p>
+          <p style="font-weight:700;">Prazo desejado: <strong>${prazo} meses</strong></p>
+          <p style="font-weight:700;margin-top:8px;padding:8px;background:${mesesPraObj<=prazo?'#d4edda':'#fff3cd'};border-radius:8px;">
+            ${mesesPraObj<=prazo?'✅ META ALCANÇÁVEL! Você chegará lá em '+mesesPraObj+' meses.':'⚠️ Para cumprir o prazo, precisa poupar R$'+(objVal/prazo).toFixed(2)+'/mês.'}
+          </p>
+        </div>
+        <p style="font-size:0.85rem;color:#666;font-weight:600;text-align:center;">"A melhor hora para plantar uma árvore foi há 20 anos. A segunda melhor hora é agora." — Provérbio Chinês</p>
+      </div>`;
+    addPontos(25);
+  };
+};
+
+</script>
+</body>
+</html>
