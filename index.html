@@ -384,7 +384,15 @@ body { font-family: 'Nunito', sans-serif; background: #f0f4f8; color: var(--text
       <span class="nivel-badge">🔴 Especialista</span>
     </div>
   </div>
-  <div class="rodape-inicio">📚 Conteúdo baseado nas apostilas oficiais · Letramento Digital EJA</div>
+  <div style="margin-top:20px;position:relative;">
+    <a href="OMUNDODOTRABALHOEASPROFISSOESNAERADAINTELIGENCIAARTIFICIAL_pdf.pdf" target="_blank"
+       style="display:inline-flex;align-items:center;gap:10px;background:linear-gradient(135deg,rgba(255,255,255,0.15),rgba(255,255,255,0.08));border:2px solid rgba(255,255,255,0.35);border-radius:50px;padding:13px 26px;color:#fff;font-family:'Nunito',sans-serif;font-size:0.98rem;font-weight:800;text-decoration:none;backdrop-filter:blur(8px);transition:all 0.25s;letter-spacing:0.3px;">
+      <span style="font-size:1.4rem;">📖</span>
+      <span>Acessar a Apostila</span>
+      <span style="font-size:0.75rem;background:rgba(255,255,255,0.2);padding:3px 8px;border-radius:20px;font-weight:700;">PDF</span>
+    </a>
+  </div>
+  <div class="rodape-inicio" style="margin-top:18px;">📚 Conteúdo baseado nas apostilas oficiais · Letramento Digital EJA</div>
 </div>
 
 <!-- ══════════════════════════════════════
@@ -460,6 +468,7 @@ const JOGOS_POR_NIVEL = {
   2: [
     { id:'silabas2', nome:'Sílabas Avançadas', icone:'🔤', desc:'Palavras mais longas', cor:'azul', dif:'facil' },
     { id:'imgpal2', nome:'Escolha Certa', icone:'🎯', desc:'Associe profissão à descrição', cor:'verde', dif:'facil' },
+    { id:'formalinformal2', nome:'Formal ou Informal?', icone:'💼', desc:'Classifique os tipos de trabalho', cor:'laranja', dif:'facil', novo:true },
     { id:'frase2', nome:'Monte a Frase', icone:'💬', desc:'Ordene as palavras', cor:'laranja', dif:'medio' },
     { id:'caca2', nome:'Caça-Palavras', icone:'🔍', desc:'Encontre 8 palavras', cor:'roxo', dif:'medio' },
     { id:'duo2', nome:'Duolingo Financeiro', icone:'🦜', desc:'Palavras de finanças', cor:'azul', dif:'medio', novo:true },
@@ -468,6 +477,7 @@ const JOGOS_POR_NIVEL = {
   3: [
     { id:'completar3', nome:'Complete a Frase', icone:'✍️', desc:'Preencha os espaços', cor:'laranja', dif:'medio' },
     { id:'ligar3', nome:'Ligue as Colunas', icone:'🔗', desc:'Profissão x descrição', cor:'verde', dif:'medio' },
+    { id:'necessidadedesejo3', nome:'Necessidade ou Desejo?', icone:'🛒', desc:'3 níveis de consumo consciente', cor:'roxo', dif:'medio', novo:true },
     { id:'quiz3', nome:'Quiz do Trabalho', icone:'❓', desc:'12 perguntas sobre o tema', cor:'azul', dif:'medio' },
     { id:'caca3', nome:'Caça-Palavras Plus', icone:'🔍', desc:'Palavras de finanças', cor:'roxo', dif:'medio' },
     { id:'duo3', nome:'Duolingo dos Direitos', icone:'🦜', desc:'Direitos e deveres', cor:'laranja', dif:'medio', novo:true },
@@ -1663,101 +1673,196 @@ JOGOS.banco5 = function(c) {
     {nome:'PROGRAMADOR\nIA',valor:300,cor:'roxo',emoji:'🦾',perg:{p:'O que o Programador de IA faz?',ops:['Conserta computadores','Cria e treina sistemas de IA','Vende software'],c:1}},
   ];
 
-  let jogador={nome:'Você',dinheiro:1500,pos:0},computador={nome:'Computador',dinheiro:1500,pos:0};
-  let compradas={},vez='jogador',rolarAtivo=true;
+  // Estado do jogo encapsulado num objeto para evitar problemas de closure
+  const estado = {
+    jogador:{nome:'Você',dinheiro:1500,pos:0},
+    computador:{nome:'Computador',dinheiro:1500,pos:0},
+    compradas:{},
+    vez:'jogador',
+    aguardando:false,  // true enquanto animação/pergunta está ativa
+    aguardandoPergunta:false  // true enquanto jogador humano está respondendo
+  };
 
-  function render(){
+  function verificarFim(){
+    if(estado.jogador.dinheiro<=0||estado.computador.dinheiro<=0){
+      const v=estado.jogador.dinheiro>estado.computador.dinheiro?'Você venceu! 🏆':'Computador venceu! 🤖';
+      setTimeout(()=>{
+        c.innerHTML=`<div class="resultado-box">
+          <div class="result-emoji">${estado.jogador.dinheiro>0?'🏆':'😢'}</div>
+          <div class="result-titulo">${v}</div>
+          <p class="result-pontos">Seu saldo final: R$ ${estado.jogador.dinheiro}</p>
+          <button class="btn btn-verde" onclick="abrirJogo('banco5')">🔄 Jogar novamente</button>
+        </div>`;
+      },600);
+      return true;
+    }
+    return false;
+  }
+
+  function atualizarTela(msgFeedback, feedbackClass){
+    // Atualiza só os elementos dinâmicos sem recriar o DOM inteiro
+    const j=estado.jogador, comp=estado.computador;
+
+    // Saldos
+    const elSaldoJ=document.getElementById('banco-saldo-j');
+    const elSaldoC=document.getElementById('banco-saldo-c');
+    if(elSaldoJ) elSaldoJ.textContent='R$ '+j.dinheiro;
+    if(elSaldoC) elSaldoC.textContent='R$ '+comp.dinheiro;
+
+    // Tabuleiro
+    const board=document.getElementById('bboard');
+    if(board){
+      board.innerHTML=casas.map((ca,i)=>{
+        const dono=estado.compradas[i];
+        let cls='';
+        if(dono==='jogador'&&i===j.pos)cls='minha';
+        else if(dono==='jogador')cls='comprada';
+        else if(dono==='computador')cls='comprada-outro';
+        const mj=i===j.pos?'👤':'', mc=i===comp.pos?'🤖':'';
+        return `<div class="banco-casa ${cls}" title="R$${ca.valor}">
+          <span>${ca.emoji}</span>
+          <span style="font-size:0.7rem;font-weight:800;">${ca.nome}</span>
+          <span style="font-size:0.65rem;">R$${ca.valor}</span>
+          ${mj?`<span class="banco-jogador">${mj}</span>`:''}
+          ${mc?`<span class="banco-jogador" style="right:auto;left:3px;">${mc}</span>`:''}
+        </div>`;
+      }).join('');
+    }
+
+    // Vez e instrução
+    const elVez=document.getElementById('banco-vez');
+    const elInstrucao=document.getElementById('banco-instrucao');
+    if(elVez) elVez.innerHTML=estado.vez==='jogador'?'👤 Você':'🤖 Computador';
+    if(elInstrucao){
+      if(estado.aguardandoPergunta) elInstrucao.textContent='Responda a pergunta abaixo!';
+      else if(estado.vez==='jogador'&&!estado.aguardando) elInstrucao.textContent='Clique no dado para rolar!';
+      else elInstrucao.textContent='Aguarde o computador...';
+    }
+
+    // Feedback
+    const fb=document.getElementById('bancofb');
+    if(fb&&msgFeedback!==undefined){fb.className='feedback '+(feedbackClass||'info');fb.textContent=msgFeedback;}
+
+    // Dado — habilitar/desabilitar clique
+    const dice=document.getElementById('dice');
+    if(dice){
+      if(estado.vez==='jogador'&&!estado.aguardando&&!estado.aguardandoPergunta){
+        dice.style.opacity='1'; dice.style.cursor='pointer';
+      } else {
+        dice.style.opacity='0.4'; dice.style.cursor='default';
+      }
+    }
+  }
+
+  function renderCompleto(){
+    const j=estado.jogador, comp=estado.computador;
     c.innerHTML=`
       <div class="jogo-header-titulo">🏦 Banco Imobiliário</div>
       <p class="jogo-instrucao">Role o dado, responda perguntas corretamente para comprar propriedades!</p>
       <div class="banco-info">
-        <div class="banco-stat"><div class="banco-stat-val" style="color:var(--cor1);">R$ ${jogador.dinheiro}</div><div class="banco-stat-label">👤 Seu dinheiro</div></div>
-        <div class="banco-stat"><div class="banco-stat-val" style="color:var(--cor5);">R$ ${computador.dinheiro}</div><div class="banco-stat-label">🤖 Computador</div></div>
+        <div class="banco-stat"><div class="banco-stat-val" id="banco-saldo-j" style="color:var(--cor1);">R$ ${j.dinheiro}</div><div class="banco-stat-label">👤 Seu dinheiro</div></div>
+        <div class="banco-stat"><div class="banco-stat-val" id="banco-saldo-c" style="color:var(--cor5);">R$ ${comp.dinheiro}</div><div class="banco-stat-label">🤖 Computador</div></div>
       </div>
-      <div class="banco-board" id="bboard">
-        ${casas.map((ca,i)=>{
-          const donoCmp=compradas[i];
-          let cls='';
-          if(donoCmp==='jogador'&&i===jogador.pos)cls='minha';
-          else if(donoCmp==='jogador')cls='comprada';
-          else if(donoCmp==='computador')cls='comprada-outro';
-          const mj=i===jogador.pos?'👤':'',mc=i===computador.pos?'🤖':'';
-          return `<div class="banco-casa ${cls}" title="R$${ca.valor}">
-            <span>${ca.emoji}</span>
-            <span style="font-size:0.7rem;font-weight:800;">${ca.nome}</span>
-            <span style="font-size:0.65rem;">R$${ca.valor}</span>
-            ${mj?`<span class="banco-jogador">${mj}</span>`:''}
-            ${mc?`<span class="banco-jogador" style="right:auto;left:3px;">${mc}</span>`:''}
-          </div>`;
-        }).join('')}
-      </div>
+      <div class="banco-board" id="bboard"></div>
       <div style="text-align:center;margin-bottom:14px;">
-        <p style="font-weight:700;margin-bottom:8px;color:#555;">Vez: <strong>${vez==='jogador'?'👤 Você':'🤖 Computador'}</strong></p>
-        <span class="banco-dice" id="dice" onclick="rolarDado()">🎲</span>
-        <p style="font-size:0.85rem;color:#888;margin-top:4px;">${rolarAtivo?'Clique no dado para rolar!':'Aguarde...'}</p>
+        <p style="font-weight:700;margin-bottom:8px;color:#555;">Vez: <strong id="banco-vez"></strong></p>
+        <span class="banco-dice" id="dice" onclick="bancoDiceClick()">🎲</span>
+        <p style="font-size:0.85rem;color:#888;margin-top:4px;" id="banco-instrucao"></p>
       </div>
       <div id="banco-pergunta-area"></div>
       <div class="feedback" id="bancofb"></div>`;
+    atualizarTela('Boa sorte! Você começa primeiro.','info');
   }
 
-  window.rolarDado=function(){
-    if(!rolarAtivo)return;
-    rolarAtivo=false;
+  window.bancoDiceClick=function(){
+    if(estado.vez!=='jogador'||estado.aguardando||estado.aguardandoPergunta) return;
+    executarRodada('jogador');
+  };
+
+  function executarRodada(quem){
+    estado.aguardando=true;
+    atualizarTela();
+
     const dice=document.getElementById('dice');
-    dice.classList.add('rolando');
+    if(dice){dice.classList.add('rolando');}
+
     setTimeout(()=>{
-      dice.classList.remove('rolando');
       const val=Math.floor(Math.random()*6)+1;
       const faces=['⚀','⚁','⚂','⚃','⚄','⚅'];
-      dice.textContent=faces[val-1];
-      const alvo=vez==='jogador'?jogador:computador;
+      if(dice){dice.classList.remove('rolando');dice.textContent=faces[val-1];}
+
+      const alvo=quem==='jogador'?estado.jogador:estado.computador;
       alvo.pos=(alvo.pos+val)%casas.length;
-      const casa=casas[alvo.pos];
-      const fb=document.getElementById('bancofb');
-      fb.className='feedback info';fb.textContent=`🎲 Tirou ${val}! Parou em: ${casa.nome.replace('\n',' ')} (R$${casa.valor})`;
+      const posAtual=alvo.pos;
+      const casa=casas[posAtual];
 
-      if(compradas[alvo.pos]&&compradas[alvo.pos]!==vez){
+      atualizarTela(`🎲 ${quem==='jogador'?'Você tirou':'Computador tirou'} ${val}! Parou em: ${casa.nome.replace('\n',' ')} (R$${casa.valor})`, 'info');
+
+      if(verificarFim()) return;
+
+      const donoAtual=estado.compradas[posAtual];
+
+      if(donoAtual && donoAtual!==quem){
         // Pagar aluguel
-        const dono=compradas[alvo.pos];
         const aluguel=Math.floor(casa.valor*0.3);
-        if(vez==='jogador'){jogador.dinheiro-=aluguel;computador.dinheiro+=aluguel;fb.textContent+=` | 💸 Pagou aluguel R$${aluguel}!`;}
-        else{computador.dinheiro-=aluguel;jogador.dinheiro+=aluguel;fb.textContent+=` | 💰 Recebeu aluguel R$${aluguel}!`;}
-        vez=vez==='jogador'?'computador':'jogador';
-        setTimeout(()=>{
-          rolarAtivo=true;
-          if(vez==='computador'){setTimeout(()=>rolarDado(),1200);}
-          render();
-        },1500);
-      } else if(!compradas[alvo.pos]&&alvo.dinheiro>=casa.valor){
-        // Mostrar pergunta
-        if(vez==='jogador'){
-          mostrarPerguntaBanco(casa,alvo.pos);
+        if(quem==='jogador'){
+          estado.jogador.dinheiro-=aluguel;
+          estado.computador.dinheiro+=aluguel;
+          atualizarTela(`💸 Você pagou aluguel de R$${aluguel} para o computador!`,'errado');
         } else {
-          // Computador responde aleatório (70% acerto)
-          const acertou=Math.random()>0.3;
-          if(acertou){compradas[alvo.pos]='computador';computador.dinheiro-=casa.valor;fb.textContent+=` | 🤖 Computador comprou!`;}
-          vez='jogador'; rolarAtivo=true;
-          setTimeout(()=>render(),1200);
+          estado.computador.dinheiro-=aluguel;
+          estado.jogador.dinheiro+=aluguel;
+          atualizarTela(`💰 Computador pagou aluguel de R$${aluguel} para você!`,'certo');
         }
-      } else {
-        vez=vez==='jogador'?'computador':'jogador';
-        rolarAtivo=true;
-        if(vez==='computador'){setTimeout(()=>rolarDado(),1000);}
-        setTimeout(()=>render(),800);
-      }
-
-      // Verificar fim
-      if(jogador.dinheiro<=0||computador.dinheiro<=0){
+        if(verificarFim()) return;
+        // Próxima vez
         setTimeout(()=>{
-          const v=jogador.dinheiro>computador.dinheiro?'Você venceu! 🏆':'Computador venceu! 🤖';
-          c.innerHTML=`<div class="resultado-box"><div class="result-emoji">${jogador.dinheiro>0?'🏆':'😢'}</div><div class="result-titulo">${v}</div><p class="result-pontos">Seu saldo final: R$ ${jogador.dinheiro}</p><button class="btn btn-verde" onclick="abrirJogo('banco5')">🔄 Jogar novamente</button></div>`;
-        },500);
+          estado.vez=(quem==='jogador')?'computador':'jogador';
+          estado.aguardando=false;
+          atualizarTela();
+          if(estado.vez==='computador') setTimeout(()=>executarRodada('computador'),1000);
+        },1800);
+
+      } else if(!donoAtual && alvo.dinheiro>=casa.valor){
+        // Pode comprar — humano vê pergunta, computador responde automaticamente
+        if(quem==='jogador'){
+          estado.aguardandoPergunta=true;
+          estado.aguardando=false;
+          mostrarPerguntaBanco(casa,posAtual);
+          atualizarTela(`❓ Responda para comprar ${casa.nome.replace('\n',' ')} por R$${casa.valor}!`,'info');
+        } else {
+          const acertou=Math.random()>0.3;
+          if(acertou){
+            estado.compradas[posAtual]='computador';
+            estado.computador.dinheiro-=casa.valor;
+            atualizarTela(`🤖 Computador comprou ${casa.nome.replace('\n',' ')}!`,'errado');
+          } else {
+            atualizarTela(`🤖 Computador errou a pergunta e não comprou.`,'info');
+          }
+          if(verificarFim()) return;
+          setTimeout(()=>{
+            estado.vez='jogador';
+            estado.aguardando=false;
+            atualizarTela();
+          },1800);
+        }
+
+      } else {
+        // Casa já comprada pelo mesmo jogador ou sem dinheiro — só passa a vez
+        atualizarTela(`🎲 Passou pela casa sem ação. Próxima vez!`,'info');
+        setTimeout(()=>{
+          estado.vez=(quem==='jogador')?'computador':'jogador';
+          estado.aguardando=false;
+          atualizarTela();
+          if(estado.vez==='computador') setTimeout(()=>executarRodada('computador'),1000);
+        },1200);
       }
-    },600);
-  };
+    },700);
+  }
 
   function mostrarPerguntaBanco(casa,posIdx){
     const pa=document.getElementById('banco-pergunta-area');
+    if(!pa) return;
     pa.innerHTML=`
       <div class="banco-pergunta">
         <p style="font-weight:800;color:var(--cor3);margin-bottom:10px;">❓ Responda para comprar ${casa.nome.replace('\n',' ')} por R$${casa.valor}:</p>
@@ -1766,19 +1871,31 @@ JOGOS.banco5 = function(c) {
           ${casa.perg.ops.map((o,i)=>`<button class="quiz-op" onclick="respBanco(${i},${casa.perg.c},${posIdx},${casa.valor})">${String.fromCharCode(65+i)}) ${o}</button>`).join('')}
         </div>
       </div>`;
-    window._bancoCasa={posIdx,valor:casa.valor};
   }
 
   window.respBanco=function(esc,corr,posIdx,valor){
     document.querySelectorAll('.quiz-op').forEach(b=>b.disabled=true);
-    const fb=document.getElementById('bancofb');
-    if(esc===corr){compradas[posIdx]='jogador';jogador.dinheiro-=valor;addPontos(15);fb.className='feedback certo';fb.textContent='🎉 Correto! Propriedade comprada!';}
-    else{document.querySelectorAll('.quiz-op')[corr].classList.add('certa');fb.className='feedback errado';fb.textContent='❌ Errou! Não comprou.';}
-    vez='computador';
-    setTimeout(()=>{render();setTimeout(()=>rolarDado(),800);},1400);
+    const pa=document.getElementById('banco-pergunta-area');
+    if(esc===corr){
+      estado.compradas[posIdx]='jogador';
+      estado.jogador.dinheiro-=valor;
+      addPontos(15);
+      atualizarTela('🎉 Correto! Propriedade comprada!','certo');
+    } else {
+      document.querySelectorAll('.quiz-op')[corr].classList.add('certa');
+      atualizarTela('❌ Errou! Não comprou a propriedade.','errado');
+    }
+    if(verificarFim()) return;
+    setTimeout(()=>{
+      if(pa) pa.innerHTML='';
+      estado.aguardandoPergunta=false;
+      estado.vez='computador';
+      atualizarTela();
+      setTimeout(()=>executarRodada('computador'),1000);
+    },1600);
   };
 
-  render();
+  renderCompleto();
 };
 
 /* ─────────────────────────────────────────
@@ -2002,6 +2119,233 @@ JOGOS.plano5 = function(c) {
       </div>`;
     addPontos(25);
   };
+};
+/* ─────────────────────────────────────────
+   NÍVEL 2 — FORMAL OU INFORMAL?
+───────────────────────────────────────── */
+JOGOS.formalinformal2 = function(c) {
+  const rodadas = [
+    // Nível 1 — situações diretas
+    { emoji:'📋', texto:'Carteira assinada em empresa', resposta:'formal', exp:'Trabalho com registro tem carteira assinada e todos os direitos da CLT.' },
+    { emoji:'🍬', texto:'Venda de doces na rua sem registro', resposta:'informal', exp:'Sem CNPJ ou carteira assinada, o trabalho é informal — sem direitos garantidos.' },
+    { emoji:'🏪', texto:'Funcionário de mercado registrado', resposta:'formal', exp:'Funcionário registrado tem férias, 13º salário, FGTS e outros direitos.' },
+    { emoji:'📱', texto:'Motorista de aplicativo sem vínculo', resposta:'informal', exp:'Motoristas de app geralmente são autônomos informais, sem carteira assinada.' },
+    // Nível 2 — situações um pouco mais elaboradas
+    { emoji:'👩‍🍳', texto:'Cozinheira contratada com carteira assinada', resposta:'formal', exp:'Carteira assinada = trabalho formal, com salário mínimo garantido e férias.' },
+    { emoji:'🪴', texto:'Jardineiro que trabalha por conta própria sem nota fiscal', resposta:'informal', exp:'Trabalho por conta própria sem registro é informal.' },
+    { emoji:'🏗️', texto:'Pedreiro em construtora com registro em carteira', resposta:'formal', exp:'Empresa registrada e carteira assinada = trabalho formal com todos os direitos.' },
+    { emoji:'🍕', texto:'Entregador de pizza sem carteira assinada', resposta:'informal', exp:'Sem vínculo empregatício registrado, o trabalho é informal.' },
+    // Nível 3 — situações para reflexão
+    { emoji:'💻', texto:'Freelancer que emite nota fiscal como MEI', resposta:'formal', exp:'MEI é uma forma legal e formal de trabalhar por conta própria com direitos.' },
+    { emoji:'🧹', texto:'Faxineira que trabalha 3 dias por semana sem registro', resposta:'informal', exp:'Trabalho doméstico sem carteira assinada é informal. A PEC das domésticas garantiu direitos!' },
+    { emoji:'🎨', texto:'Designer contratado como CLT em agência', resposta:'formal', exp:'CLT = Consolidação das Leis do Trabalho — garante todos os direitos trabalhistas.' },
+    { emoji:'🛒', texto:'Camelô que vende produtos na feira livre', resposta:'informal', exp:'Vendas em feiras sem CNPJ ou MEI são trabalho informal.' },
+  ];
+
+  const POR_FASE = 4;
+  let idx = 0, acertos = 0, pontos = 0, resp = false;
+  let fase = 1;
+
+  const corFormal = 'var(--cor2)';
+  const corInformal = 'var(--cor3)';
+
+  function render() {
+    if (idx >= rodadas.length) { resultadoFinal(pontos, rodadas.length * 10, c); return; }
+    fase = Math.floor(idx / POR_FASE) + 1;
+    const r = rodadas[idx]; resp = false;
+    const progPct = Math.round(idx / rodadas.length * 100);
+
+    c.innerHTML = `
+      <div class="jogo-header-titulo">💼 Formal ou Informal?</div>
+      <p class="jogo-instrucao">Leia a situação e classifique: o trabalho é <strong>Formal</strong> ou <strong>Informal</strong>?</p>
+      <div class="placar-jogo">⭐ Pontos: <span id="fip">${pontos}</span> &nbsp;|&nbsp; ✅ Acertos: ${acertos}/${rodadas.length}</div>
+      <div class="barra-prog" style="margin-bottom:16px;"><div class="barra-fill" style="width:${progPct}%"></div></div>
+      <div style="background:linear-gradient(135deg,#e8f0fe,#f0f8ff);border:3px solid var(--cor2);border-radius:18px;padding:24px;text-align:center;margin-bottom:20px;">
+        <div style="font-size:0.75rem;font-weight:800;color:#888;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">Fase ${fase} de 3 — Situação ${idx+1} de ${rodadas.length}</div>
+        <span style="font-size:3.5rem;display:block;margin-bottom:12px;">${r.emoji}</span>
+        <p style="font-size:1.15rem;font-weight:800;color:var(--texto);line-height:1.4;">${r.texto}</p>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
+        <button onclick="fiResp(this,'formal')" style="background:linear-gradient(135deg,var(--cor2),var(--cor2d));color:white;border:none;border-radius:16px;padding:18px 10px;font-family:'Fredoka One',cursive;font-size:1.2rem;cursor:pointer;transition:all 0.2s;box-shadow:0 4px 12px rgba(52,152,219,0.3);">
+          📋 FORMAL
+          <div style="font-family:'Nunito',sans-serif;font-size:0.72rem;font-weight:700;opacity:0.9;margin-top:4px;">Com carteira / CLT / MEI</div>
+        </button>
+        <button onclick="fiResp(this,'informal')" style="background:linear-gradient(135deg,var(--cor3),var(--cor3d));color:white;border:none;border-radius:16px;padding:18px 10px;font-family:'Fredoka One',cursive;font-size:1.2rem;cursor:pointer;transition:all 0.2s;box-shadow:0 4px 12px rgba(230,126,34,0.3);">
+          🤝 INFORMAL
+          <div style="font-family:'Nunito',sans-serif;font-size:0.72rem;font-weight:700;opacity:0.9;margin-top:4px;">Sem registro / sem direitos</div>
+        </button>
+      </div>
+      <div class="feedback" id="fifb"></div>
+      <button class="btn btn-azul" style="margin-top:10px;" onclick="fiProx()">➡️ Próxima</button>`;
+    window._fiR = r;
+  }
+
+  window.fiResp = function(btn, escolha) {
+    if (resp) return; resp = true;
+    const r = window._fiR;
+    const fb = document.getElementById('fifb');
+    document.querySelectorAll('[onclick^="fiResp"]').forEach(b => b.disabled = true);
+    if (escolha === r.resposta) {
+      btn.style.transform = 'scale(1.05)';
+      btn.style.boxShadow = '0 0 0 4px var(--cor1)';
+      acertos++; pontos += 10; addPontos(10);
+      document.getElementById('fip').textContent = pontos;
+      fb.className = 'feedback certo';
+      fb.innerHTML = `🎉 <strong>Correto!</strong> ${r.exp}`;
+    } else {
+      btn.style.opacity = '0.5';
+      fb.className = 'feedback errado';
+      fb.innerHTML = `❌ <strong>Era ${r.resposta === 'formal' ? 'FORMAL' : 'INFORMAL'}!</strong> ${r.exp}`;
+    }
+  };
+  window.fiProx = function() { idx++; render(); };
+  render();
+};
+
+/* ─────────────────────────────────────────
+   NÍVEL 3 — NECESSIDADE OU DESEJO?
+───────────────────────────────────────── */
+JOGOS.necessidadedesejo3 = function(c) {
+  const fases = [
+    {
+      titulo: 'Fase 1 — O Básico',
+      subtitulo: 'Itens do dia a dia mais simples',
+      itens: [
+        { emoji:'🍚', texto:'Arroz e feijão para o almoço', resposta:'necessidade', exp:'Alimentação é uma necessidade básica fundamental.' },
+        { emoji:'👟', texto:'Tênis de marca famosa', resposta:'desejo', exp:'Um tênis de marca é um desejo — um tênis simples já cumpre a função.' },
+        { emoji:'💊', texto:'Remédio para pressão alta', resposta:'necessidade', exp:'Remédios para saúde são necessidades — sem eles há risco à vida.' },
+        { emoji:'📺', texto:'TV nova de 75 polegadas', resposta:'desejo', exp:'Uma TV nova é um desejo. Entretenimento básico pode ser atendido com um aparelho simples.' },
+        { emoji:'💧', texto:'Conta de água e luz do mês', resposta:'necessidade', exp:'Água e energia elétrica são necessidades básicas de moradia.' },
+        { emoji:'☕', texto:'Cafezinho no trabalho', resposta:'desejo', exp:'Café pode ser desejo — não é essencial para sobrevivência, mas é hábito comum.' },
+      ]
+    },
+    {
+      titulo: 'Fase 2 — Consumo Consciente',
+      subtitulo: 'Pense bem antes de responder!',
+      itens: [
+        { emoji:'🏠', texto:'Aluguel da casa onde a família mora', resposta:'necessidade', exp:'Moradia é uma necessidade humana fundamental.' },
+        { emoji:'🎮', texto:'Videogame novo', resposta:'desejo', exp:'Jogos são entretenimento — um desejo, não uma necessidade.' },
+        { emoji:'🚌', texto:'Passagem de ônibus para o trabalho', resposta:'necessidade', exp:'Transporte para trabalhar é uma necessidade — sem ele não há renda.' },
+        { emoji:'💄', texto:'Perfume importado', resposta:'desejo', exp:'Perfume importado é um desejo. Higiene básica pode ser feita com produtos acessíveis.' },
+        { emoji:'📱', texto:'Celular básico para comunicação', resposta:'necessidade', exp:'Hoje um celular básico é necessidade para trabalho, saúde e comunicação familiar.' },
+        { emoji:'🎁', texto:'Presente de aniversário caro para si mesmo', resposta:'desejo', exp:'Mimo para si mesmo é desejo — pode ser substituído por alternativas mais baratas.' },
+      ]
+    },
+    {
+      titulo: 'Fase 3 — O Desafio Final',
+      subtitulo: 'Situações do mundo real — reflita!',
+      itens: [
+        { emoji:'📚', texto:'Curso profissionalizante para conseguir emprego', resposta:'necessidade', exp:'Educação para conseguir trabalho e renda pode ser considerada uma necessidade.' },
+        { emoji:'🍔', texto:'Delivery de hambúrguer gourmet', resposta:'desejo', exp:'Delivery caro é um desejo — a alimentação necessária pode ser feita em casa.' },
+        { emoji:'👶', texto:'Fralda para bebê recém-nascido', resposta:'necessidade', exp:'Itens de higiene para bebês são necessidades básicas.' },
+        { emoji:'✈️', texto:'Viagem internacional de férias', resposta:'desejo', exp:'Viagem internacional é um desejo — descanso pode ser feito de formas mais acessíveis.' },
+        { emoji:'🦷', texto:'Consulta no dentista para dor de dente', resposta:'necessidade', exp:'Saúde bucal é necessidade — dor de dente afeta alimentação, trabalho e qualidade de vida.' },
+        { emoji:'🎧', texto:'Fone de ouvido sem fio de luxo', resposta:'desejo', exp:'Fone de ouvido de luxo é desejo — um fone simples já resolve a função básica.' },
+      ]
+    }
+  ];
+
+  let faseIdx = 0, itemIdx = 0, acertos = 0, pontos = 0, resp = false;
+  let acertosFase = 0;
+
+  function getFaseAtual() { return fases[faseIdx]; }
+  function getItemAtual() { return getFaseAtual().itens[itemIdx]; }
+
+  function render() {
+    if (faseIdx >= fases.length) { resultadoFinal(pontos, fases.reduce((a,f)=>a+f.itens.length,0) * 10, c); return; }
+    const fase = getFaseAtual();
+    const item = getItemAtual();
+    resp = false;
+    const totalItens = fases.reduce((a,f)=>a+f.itens.length,0);
+    const idxGlobal = fases.slice(0,faseIdx).reduce((a,f)=>a+f.itens.length,0) + itemIdx;
+    const progPct = Math.round(idxGlobal / totalItens * 100);
+
+    c.innerHTML = `
+      <div class="jogo-header-titulo">🛒 Necessidade ou Desejo?</div>
+      <p class="jogo-instrucao">Classifique cada item: é uma <strong>Necessidade</strong> (preciso para viver) ou um <strong>Desejo</strong> (quero, mas posso viver sem)?</p>
+      <div class="placar-jogo">⭐ Pontos: <span id="ndp">${pontos}</span> &nbsp;|&nbsp; ✅ ${acertos}/${totalItens}</div>
+      <div class="barra-prog" style="margin-bottom:16px;"><div class="barra-fill" style="width:${progPct}%"></div></div>
+
+      <div style="background:linear-gradient(135deg,#f3e8ff,#e8f0fe);border:3px solid var(--cor4);border-radius:14px;padding:10px 16px;margin-bottom:16px;display:flex;align-items:center;gap:10px;">
+        <span style="font-size:1.3rem;">🎯</span>
+        <div>
+          <p style="font-weight:900;color:var(--cor4);font-size:0.95rem;">${fase.titulo}</p>
+          <p style="font-size:0.8rem;color:#888;font-weight:600;">${fase.subtitulo}</p>
+        </div>
+        <span style="margin-left:auto;font-size:0.8rem;font-weight:800;color:var(--cor4);">Item ${itemIdx+1}/${fase.itens.length}</span>
+      </div>
+
+      <div style="background:white;border:3px solid #e0e0e0;border-radius:18px;padding:28px;text-align:center;margin-bottom:20px;box-shadow:var(--sombra);">
+        <span style="font-size:4rem;display:block;margin-bottom:14px;">${item.emoji}</span>
+        <p style="font-size:1.15rem;font-weight:800;color:var(--texto);line-height:1.5;">${item.texto}</p>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px;">
+        <button onclick="ndResp(this,'necessidade')" style="background:linear-gradient(135deg,#27ae60,#2ecc71);color:white;border:none;border-radius:16px;padding:20px 10px;font-family:'Fredoka One',cursive;font-size:1.15rem;cursor:pointer;transition:all 0.2s;box-shadow:0 4px 14px rgba(46,204,113,0.35);">
+          ✅ NECESSIDADE
+          <div style="font-family:'Nunito',sans-serif;font-size:0.7rem;font-weight:700;opacity:0.9;margin-top:5px;">Preciso para viver bem</div>
+        </button>
+        <button onclick="ndResp(this,'desejo')" style="background:linear-gradient(135deg,#9b59b6,#8e44ad);color:white;border:none;border-radius:16px;padding:20px 10px;font-family:'Fredoka One',cursive;font-size:1.15rem;cursor:pointer;transition:all 0.2s;box-shadow:0 4px 14px rgba(155,89,182,0.35);">
+          💜 DESEJO
+          <div style="font-family:'Nunito',sans-serif;font-size:0.7rem;font-weight:700;opacity:0.9;margin-top:5px;">Quero, mas posso esperar</div>
+        </button>
+      </div>
+      <div class="feedback" id="ndfb"></div>
+      <button class="btn btn-roxo" style="margin-top:10px;" onclick="ndProx()">➡️ Próximo</button>`;
+    window._ndItem = item;
+  }
+
+  window.ndResp = function(btn, escolha) {
+    if (resp) return; resp = true;
+    const item = window._ndItem;
+    const fb = document.getElementById('ndfb');
+    document.querySelectorAll('[onclick^="ndResp"]').forEach(b => b.disabled = true);
+    if (escolha === item.resposta) {
+      btn.style.transform = 'scale(1.05)';
+      btn.style.boxShadow = '0 0 0 4px gold';
+      acertos++; acertosFase++; pontos += 10; addPontos(10);
+      document.getElementById('ndp').textContent = pontos;
+      fb.className = 'feedback certo';
+      fb.innerHTML = `🎉 <strong>Correto!</strong> ${item.exp}`;
+    } else {
+      btn.style.opacity = '0.5';
+      fb.className = 'feedback errado';
+      fb.innerHTML = `❌ <strong>Era ${item.resposta === 'necessidade' ? 'NECESSIDADE' : 'DESEJO'}!</strong> ${item.exp}`;
+    }
+  };
+
+  window.ndProx = function() {
+    itemIdx++;
+    if (itemIdx >= getFaseAtual().itens.length) {
+      // Fim de fase — mostrar resumo
+      const fase = getFaseAtual();
+      const total = fase.itens.length;
+      const pct = Math.round(acertosFase / total * 100);
+      faseIdx++; itemIdx = 0; acertosFase = 0;
+      if (faseIdx >= fases.length) { resultadoFinal(pontos, fases.reduce((a,f)=>a+f.itens.length,0)*10, c); return; }
+      c.innerHTML = `
+        <div class="resultado-box">
+          <div class="result-emoji">${pct>=80?'🏆':pct>=60?'⭐':'💪'}</div>
+          <div class="result-titulo">${pct>=80?'Fase concluída!':pct>=60?'Muito bem!':'Continue!'}</div>
+          <p class="result-pontos">Você acertou <strong>${Math.round(acertos - (fases.slice(0,faseIdx-1).reduce((a,f)=>a,0)))} de ${total}</strong> nesta fase (${pct}%)</p>
+          <div class="barra-prog"><div class="barra-fill" style="width:${pct}%"></div></div>
+          <div style="background:linear-gradient(135deg,#f3e8ff,#e8f0fe);border-radius:14px;padding:16px;margin:16px 0;text-align:left;">
+            <p style="font-weight:800;color:var(--cor4);margin-bottom:8px;">💡 Lembre-se:</p>
+            <p style="font-weight:700;font-size:0.95rem;line-height:1.6;">Na regra <strong>50-30-20</strong>:<br>
+            • 50% da renda para <strong>necessidades</strong><br>
+            • 30% para <strong>desejos</strong> (com consciência)<br>
+            • 20% para <strong>poupança</strong> e investimentos</p>
+          </div>
+          <p style="font-weight:800;color:var(--cor4);margin-bottom:12px;">Próxima: <strong>${fases[faseIdx].titulo}</strong></p>
+          <button class="btn btn-roxo" onclick="ndProxFase()">🚀 Ir para a próxima fase!</button>
+        </div>`;
+    } else {
+      render();
+    }
+  };
+
+  window.ndProxFase = function() { render(); };
+  render();
 };
 
 </script>
